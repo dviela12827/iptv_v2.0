@@ -358,12 +358,14 @@ export default function AdminDashboard() {
         }
     };
 
-    if (authChecking || ipChecking) return (
-        <div className="min-h-screen bg-black flex flex-col items-center justify-center space-y-4">
-            <Loader2 className="text-red-600 animate-spin" size={48} />
-            <div className="text-red-600 font-black tracking-widest animate-pulse">REDFLIX SECURITY...</div>
-        </div>
-    );
+    if (authChecking || ipChecking) {
+        return (
+            <div className="min-h-screen bg-black flex flex-col items-center justify-center space-y-4">
+                <Loader2 className="text-red-600 animate-spin" size={48} />
+                <div className="text-red-600 font-black tracking-widest animate-pulse">REDFLIX SECURITY...</div>
+            </div>
+        );
+    }
 
     // BARREIRA DE IP (Proteção Máxima)
     if (!isIpAuthorized) {
@@ -418,7 +420,7 @@ export default function AdminDashboard() {
     }
 
     return (
-        <div className="h-[100dvh] md:h-screen bg-[#020202] text-white font-sans flex overflow-hidden">
+        <div className="h-screen bg-[#020202] text-white font-sans flex overflow-hidden">
             {/* Overlay para Mobile quando Sidebar aberta */}
             {isSidebarOpen && (
                 <div
@@ -777,286 +779,287 @@ export default function AdminDashboard() {
                                         Mostrando {Math.min(metrics.data.length, (currentPage - 1) * rowsPerPage + 1)}-{Math.min(metrics.data.length, currentPage * rowsPerPage)} de {metrics.data.length}
                                     </div>
                                 </div>
-                            </>
-                        )}
+                            </div>
+                        </>
+                    )}
 
-                            {activeTab === 'expiring' && (
-                                <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                                    <div className="text-center md:text-left">
-                                        <h2 className="text-3xl font-black italic tracking-tighter uppercase text-white">Recuperação de <span className="text-red-600">Vendas</span></h2>
-                                        <p className="text-xs text-gray-500 mt-2 font-medium">Capture clientes com assinatura próxima do vencimento.</p>
+                    {activeTab === 'expiring' && (
+                        <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                            <div className="text-center md:text-left">
+                                <h2 className="text-3xl font-black italic tracking-tighter uppercase text-white">Recuperação de <span className="text-red-600">Vendas</span></h2>
+                                <p className="text-xs text-gray-500 mt-2 font-medium">Capture clientes com assinatura próxima do vencimento.</p>
+                            </div>
+
+                            <div className="bg-[#0a0a0a] border border-white/5 rounded-3xl overflow-hidden shadow-2xl">
+                                <div className="p-8 border-b border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 bg-gradient-to-r from-red-600/5 to-transparent">
+                                    <h3 className="text-lg font-black italic tracking-tighter uppercase">Assinaturas Ativas ({metrics.expiring.length} de {metrics.expiringTotal})</h3>
+                                    <div className="relative w-full md:w-80">
+                                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" size={16} />
+                                        <input type="text" placeholder="PESQUISAR CLIENTE..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full bg-black border border-white/10 rounded-xl py-3 pl-12 pr-4 text-[10px] font-black focus:border-red-600 outline-none transition-all placeholder:opacity-30" />
                                     </div>
-
-                                    <div className="bg-[#0a0a0a] border border-white/5 rounded-3xl overflow-hidden shadow-2xl">
-                                        <div className="p-8 border-b border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 bg-gradient-to-r from-red-600/5 to-transparent">
-                                            <h3 className="text-lg font-black italic tracking-tighter uppercase">Assinaturas Ativas ({metrics.expiring.length} de {metrics.expiringTotal})</h3>
-                                            <div className="relative w-full md:w-80">
-                                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" size={16} />
-                                                <input type="text" placeholder="PESQUISAR CLIENTE..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full bg-black border border-white/10 rounded-xl py-3 pl-12 pr-4 text-[10px] font-black focus:border-red-600 outline-none transition-all placeholder:opacity-30" />
-                                            </div>
-                                        </div>
-                                        <div className="overflow-x-auto">
-                                            <table className="w-full text-left border-collapse">
-                                                <thead className="bg-[#050505] text-[9px] font-black uppercase tracking-[0.2em] text-gray-500 border-b border-white/5">
-                                                    <tr>
-                                                        <th className="px-8 py-5">Cliente</th>
-                                                        <th className="px-8 py-5">Plano Atual</th>
-                                                        <th className="px-8 py-5 text-center">Vencimento</th>
-                                                        <th className="px-8 py-5 text-right">Ações</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody className="divide-y divide-white/5">
-                                                    {metrics.expiring.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage).map(lead => {
-                                                        const days = getDaysRemaining(lead.createdAt, lead.plan);
-                                                        const isUrgent = days <= 5;
-                                                        return (
-                                                            <tr key={lead.id} className="hover:bg-white/[0.02] transition-colors group">
-                                                                <td className="px-8 py-6">
-                                                                    <div className="text-xs font-black text-white">{lead.email}</div>
-                                                                    <div className="text-[10px] text-gray-600 font-bold mt-1 uppercase tracking-widest">{lead.phone}</div>
-                                                                </td>
-                                                                <td className="px-8 py-6">
-                                                                    <span className="bg-white/5 border border-white/10 px-2 py-1 rounded text-[9px] font-black uppercase text-gray-400">{lead.plan}</span>
-                                                                </td>
-                                                                <td className="px-8 py-6 text-center">
-                                                                    <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${isUrgent ? 'bg-red-600 text-white animate-pulse' : 'bg-green-600/10 text-green-500'}`}>
-                                                                        <Clock size={10} /> {days} DIAS
-                                                                    </div>
-                                                                </td>
-                                                                <td className="px-8 py-6">
-                                                                    <div className="flex justify-end gap-2">
-                                                                        <a href={`https://wa.me/${lead.phone.replace(/\D/g, '')}`} target="_blank" className="p-2.5 bg-green-600/10 hover:bg-green-600 text-green-500 hover:text-white rounded-xl transition-all border border-green-600/20">
-                                                                            <MessageCircle size={16} />
-                                                                        </a>
-                                                                        <button onClick={() => { setSelectedLead(lead); setDiscount(10); }} className="px-4 py-2 bg-white text-black font-black rounded-xl text-[10px] uppercase hover:bg-red-600 hover:text-white transition-all">
-                                                                            GERAR PROPOSTA
-                                                                        </button>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                        );
-                                                    })}
-                                                </tbody>
-                                            </table>
-                                        </div>
-
-                                        <div className="p-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 bg-[#050505]">
-                                            <div className="flex items-center gap-2">
-                                                <button
-                                                    disabled={currentPage === 1}
-                                                    onClick={() => setCurrentPage(prev => prev - 1)}
-                                                    className="p-2 border border-white/10 rounded-lg hover:bg-white/5 disabled:opacity-20 transition-all text-gray-400"
-                                                >
-                                                    <Calendar size={14} className="rotate-90" />
-                                                </button>
-                                                {Array.from({ length: Math.ceil(metrics.expiring.length / rowsPerPage) }, (_, i) => i + 1)
-                                                    .filter(p => p === 1 || p === Math.ceil(metrics.expiring.length / rowsPerPage) || Math.abs(p - currentPage) <= 1)
-                                                    .map((p, i, arr) => (
-                                                        <Fragment key={p}>
-                                                            {i > 0 && arr[i - 1] !== p - 1 && <span className="text-gray-600">...</span>}
-                                                            <button
-                                                                onClick={() => setCurrentPage(p)}
-                                                                className={`w-8 h-8 rounded-lg text-[10px] font-black transition-all ${currentPage === p ? 'bg-red-600 text-white' : 'hover:bg-white/5 text-gray-500'}`}
-                                                            >
-                                                                {p}
-                                                            </button>
-                                                        </Fragment>
-                                                    ))}
-                                                <button
-                                                    disabled={currentPage === Math.ceil(metrics.expiring.length / rowsPerPage)}
-                                                    onClick={() => setCurrentPage(prev => prev + 1)}
-                                                    className="p-2 border border-white/10 rounded-lg hover:bg-white/5 disabled:opacity-20 transition-all text-gray-400"
-                                                >
-                                                    <Calendar size={14} className="-rotate-90" />
-                                                </button>
-                                            </div>
-                                            <div className="text-[9px] font-black text-gray-600 uppercase tracking-widest">
-                                                Mostrando {Math.min(metrics.expiring.length, (currentPage - 1) * rowsPerPage + 1)}-{Math.min(metrics.expiring.length, currentPage * rowsPerPage)} de {metrics.expiring.length}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Modal de Proposta Profissional */}
-                                    {selectedLead && (
-                                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6 lg:p-10">
-                                            <div className="absolute inset-0 bg-black/90 backdrop-blur-xl" onClick={() => setSelectedLead(null)} />
-                                            <div className="bg-[#0f0f0f] border border-white/10 rounded-[2rem] w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-[0_0_100px_rgba(220,38,38,0.1)] relative z-10 scrollbar-hide">
-                                                <div className="sticky top-0 bg-[#0f0f0f]/80 backdrop-blur-md p-8 border-b border-white/5 flex justify-between items-center z-20">
-                                                    <div>
-                                                        <h3 className="text-2xl font-black italic tracking-tighter text-white uppercase">Oferta de <span className="text-red-600">Renovação</span></h3>
-                                                        <p className="text-[10px] text-gray-500 font-bold uppercase mt-1">Configurando proposta para: {selectedLead.email}</p>
-                                                    </div>
-                                                    <button onClick={() => setSelectedLead(null)} className="p-2 text-gray-500 hover:text-white transition-colors bg-white/5 rounded-xl"><X size={24} /></button>
-                                                </div>
-
-                                                <div className="p-8 space-y-8">
-                                                    {/* Controle de Desconto e Estilo */}
-                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                                        <div className="bg-white/5 p-6 rounded-2xl border border-white/5 space-y-4">
-                                                            <div className="flex justify-between items-center">
-                                                                <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest block">Margem de Desconto</span>
-                                                                <span className={`text-2xl font-black italic tracking-tighter ${discount === 0 ? 'text-gray-400' : 'text-red-600'}`}>{discount === 0 ? 'P preço base' : `${discount}% OFF`}</span>
-                                                            </div>
-                                                            <div className="flex gap-2 mb-2">
-                                                                {[0, 5, 10, 15, 20, 25, 50].map(v => (
-                                                                    <button
-                                                                        key={v}
-                                                                        onClick={() => setDiscount(v)}
-                                                                        className={`flex-1 py-2 rounded-lg text-[9px] font-black uppercase transition-all border ${discount === v ? 'bg-red-600 border-red-600 text-white' : 'bg-black/40 border-white/10 text-gray-500'}`}
-                                                                    >
-                                                                        {v === 0 ? 'Sem Promo' : `${v}%`}
-                                                                    </button>
-                                                                ))}
-                                                            </div>
-                                                            <input type="range" min="0" max="50" step="5" value={discount} onChange={e => setDiscount(parseInt(e.target.value))} className="w-full h-2 bg-black rounded-full appearance-none cursor-pointer accent-red-600" />
-                                                            <div className="flex justify-between text-[7px] font-black text-gray-700 tracking-widest uppercase"><span>0%</span><span>25%</span><span>50%</span></div>
-                                                        </div>
-
-                                                        <div className="bg-white/5 p-6 rounded-2xl border border-white/5 space-y-4">
-                                                            <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest block">Tom da Mensagem</span>
-                                                            <div className="grid grid-cols-4 gap-2">
-                                                                {[
-                                                                    { id: 'aggressive', label: '🔥Braba' },
-                                                                    { id: 'informal', label: '🤙Mano' },
-                                                                    { id: 'formal', label: '👔Dr.' },
-                                                                    { id: 'fun', label: '🎬Play' },
-                                                                    { id: 'funny', label: '😂Zueira' },
-                                                                    { id: 'scarcity', label: '⏳Corre' },
-                                                                    { id: 'short', label: '⚡Papo' }
-                                                                ].map(s => (
-                                                                    <button
-                                                                        key={s.id}
-                                                                        onClick={() => setMsgStyle(s.id as any)}
-                                                                        className={`py-2 rounded-lg text-[8px] font-bold uppercase transition-all border ${msgStyle === s.id ? 'bg-red-600 border-red-600 text-white shadow-lg shadow-red-600/20' : 'bg-black border-white/10 text-gray-500 hover:border-white/20'}`}
-                                                                    >
-                                                                        {s.label}
-                                                                    </button>
-                                                                ))}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    {/* Tabela de Opções */}
-                                                    <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl overflow-hidden">
-                                                        <table className="w-full text-left">
-                                                            <thead className="bg-white/5 text-[9px] font-black uppercase tracking-[0.2em] text-gray-500 border-b border-white/5">
-                                                                <tr>
-                                                                    <th className="px-6 py-4">Opção</th>
-                                                                    <th className="px-6 py-4">Prévia da Mensagem</th>
-                                                                    <th className="px-6 py-4 text-right">Ação</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody className="divide-y divide-white/5">
-                                                                {['monthly', 'trimestral', 'semestral'].map(t => {
-                                                                    const p = getProposal(t);
-                                                                    return (
-                                                                        <tr key={t} className="hover:bg-white/[0.01] transition-colors group">
-                                                                            <td className="px-6 py-6 min-w-[140px]">
-                                                                                <div className="flex items-center gap-3">
-                                                                                    <span className="p-2 bg-red-600/10 rounded-lg text-red-600"><Star size={14} /></span>
-                                                                                    <span className="text-[10px] font-black uppercase tracking-widest text-white">{t === 'monthly' ? 'Mensal' : t === 'trimestral' ? 'Trimestral' : 'Semestral'}</span>
-                                                                                </div>
-                                                                            </td>
-                                                                            <td className="px-6 py-6">
-                                                                                <div className="bg-black/40 p-3 rounded-lg border border-white/5 max-w-md">
-                                                                                    <p className="text-[10px] text-gray-400 leading-relaxed italic line-clamp-2">"{p.creative}"</p>
-                                                                                </div>
-                                                                            </td>
-                                                                            <td className="px-6 py-6">
-                                                                                <div className="flex justify-end gap-2">
-                                                                                    <button onClick={() => { navigator.clipboard.writeText(p.link); alert('Link Copiado!'); }} className="p-2 text-gray-500 hover:text-white transition-colors"><Copy size={16} /></button>
-                                                                                    <a
-                                                                                        href={`https://wa.me/${selectedLead.phone.replace(/\D/g, '')}?text=${encodeURIComponent(p.creative)}`}
-                                                                                        target="_blank"
-                                                                                        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-[9px] font-black uppercase flex items-center gap-2 shadow-lg shadow-green-600/20"
-                                                                                    >
-                                                                                        <Send size={12} /> ENVIAR
-                                                                                    </a>
-                                                                                </div>
-                                                                            </td>
-                                                                        </tr>
-                                                                    );
-                                                                })}
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )}
                                 </div>
-                            )
-                            }
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-left border-collapse">
+                                        <thead className="bg-[#050505] text-[9px] font-black uppercase tracking-[0.2em] text-gray-500 border-b border-white/5">
+                                            <tr>
+                                                <th className="px-8 py-5">Cliente</th>
+                                                <th className="px-8 py-5">Plano Atual</th>
+                                                <th className="px-8 py-5 text-center">Vencimento</th>
+                                                <th className="px-8 py-5 text-right">Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-white/5">
+                                            {metrics.expiring.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage).map(lead => {
+                                                const days = getDaysRemaining(lead.createdAt, lead.plan);
+                                                const isUrgent = days <= 5;
+                                                return (
+                                                    <tr key={lead.id} className="hover:bg-white/[0.02] transition-colors group">
+                                                        <td className="px-8 py-6">
+                                                            <div className="text-xs font-black text-white">{lead.email}</div>
+                                                            <div className="text-[10px] text-gray-600 font-bold mt-1 uppercase tracking-widest">{lead.phone}</div>
+                                                        </td>
+                                                        <td className="px-8 py-6">
+                                                            <span className="bg-white/5 border border-white/10 px-2 py-1 rounded text-[9px] font-black uppercase text-gray-400">{lead.plan}</span>
+                                                        </td>
+                                                        <td className="px-8 py-6 text-center">
+                                                            <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${isUrgent ? 'bg-red-600 text-white animate-pulse' : 'bg-green-600/10 text-green-500'}`}>
+                                                                <Clock size={10} /> {days} DIAS
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-8 py-6">
+                                                            <div className="flex justify-end gap-2">
+                                                                <a href={`https://wa.me/${lead.phone.replace(/\D/g, '')}`} target="_blank" className="p-2.5 bg-green-600/10 hover:bg-green-600 text-green-500 hover:text-white rounded-xl transition-all border border-green-600/20">
+                                                                    <MessageCircle size={16} />
+                                                                </a>
+                                                                <button onClick={() => { setSelectedLead(lead); setDiscount(10); }} className="px-4 py-2 bg-white text-black font-black rounded-xl text-[10px] uppercase hover:bg-red-600 hover:text-white transition-all">
+                                                                    GERAR PROPOSTA
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            })}
+                                        </tbody>
+                                    </table>
+                                </div>
 
-                            {
-                                activeTab === 'pix' && (
-                                    <div className="space-y-10">
-                                        <div className="text-center md:text-left">
-                                            <h2 className="text-3xl font-black italic tracking-tighter uppercase text-white">Gerador de <span className="text-red-600">Cobranças</span></h2>
-                                            <p className="text-xs text-gray-500 mt-2 font-medium">Capture vendas offline gerando Pix manuais instantaneamente.</p>
+                                <div className="p-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 bg-[#050505]">
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            disabled={currentPage === 1}
+                                            onClick={() => setCurrentPage(prev => prev - 1)}
+                                            className="p-2 border border-white/10 rounded-lg hover:bg-white/5 disabled:opacity-20 transition-all text-gray-400"
+                                        >
+                                            <Calendar size={14} className="rotate-90" />
+                                        </button>
+                                        {Array.from({ length: Math.ceil(metrics.expiring.length / rowsPerPage) }, (_, i) => i + 1)
+                                            .filter(p => p === 1 || p === Math.ceil(metrics.expiring.length / rowsPerPage) || Math.abs(p - currentPage) <= 1)
+                                            .map((p, i, arr) => (
+                                                <Fragment key={p}>
+                                                    {i > 0 && arr[i - 1] !== p - 1 && <span className="text-gray-600">...</span>}
+                                                    <button
+                                                        onClick={() => setCurrentPage(p)}
+                                                        className={`w-8 h-8 rounded-lg text-[10px] font-black transition-all ${currentPage === p ? 'bg-red-600 text-white' : 'hover:bg-white/5 text-gray-500'}`}
+                                                    >
+                                                        {p}
+                                                    </button>
+                                                </Fragment>
+                                            ))}
+                                        <button
+                                            disabled={currentPage === Math.ceil(metrics.expiring.length / rowsPerPage)}
+                                            onClick={() => setCurrentPage(prev => prev + 1)}
+                                            className="p-2 border border-white/10 rounded-lg hover:bg-white/5 disabled:opacity-20 transition-all text-gray-400"
+                                        >
+                                            <Calendar size={14} className="-rotate-90" />
+                                        </button>
+                                    </div>
+                                    <div className="text-[9px] font-black text-gray-600 uppercase tracking-widest">
+                                        Mostrando {Math.min(metrics.expiring.length, (currentPage - 1) * rowsPerPage + 1)}-{Math.min(metrics.expiring.length, currentPage * rowsPerPage)} de {metrics.expiring.length}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Modal de Proposta Profissional */}
+                            {selectedLead && (
+                                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6 lg:p-10">
+                                    <div className="absolute inset-0 bg-black/90 backdrop-blur-xl" onClick={() => setSelectedLead(null)} />
+                                    <div className="bg-[#0f0f0f] border border-white/10 rounded-[2rem] w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-[0_0_100px_rgba(220,38,38,0.1)] relative z-10 scrollbar-hide">
+                                        <div className="sticky top-0 bg-[#0f0f0f]/80 backdrop-blur-md p-8 border-b border-white/5 flex justify-between items-center z-20">
+                                            <div>
+                                                <h3 className="text-2xl font-black italic tracking-tighter text-white uppercase">Oferta de <span className="text-red-600">Renovação</span></h3>
+                                                <p className="text-[10px] text-gray-500 font-bold uppercase mt-1">Configurando proposta para: {selectedLead.email}</p>
+                                            </div>
+                                            <button onClick={() => setSelectedLead(null)} className="p-2 text-gray-500 hover:text-white transition-colors bg-white/5 rounded-xl"><X size={24} /></button>
                                         </div>
 
-                                        <div className="max-w-4xl mx-auto bg-[#0a0a0a] border border-white/5 rounded-[3rem] overflow-hidden shadow-2xl flex flex-col md:flex-row">
-                                            <div className="flex-1 p-10 space-y-8 border-r border-white/5">
-                                                <div className="flex bg-black p-1.5 rounded-2xl border border-white/5">
-                                                    <button onClick={() => setPixType('anon')} className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${pixType === 'anon' ? 'bg-red-600 text-white' : 'text-gray-500 hover:text-white'}`}>Anônimo</button>
-                                                    <button onClick={() => setPixType('real')} className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${pixType === 'real' ? 'bg-white text-black' : 'text-gray-500 hover:text-white'}`}>Dados Reais</button>
-                                                </div>
-
-                                                {pixType === 'real' && (
-                                                    <div className="grid grid-cols-1 gap-4">
-                                                        <input type="email" placeholder="EMAIL DO CLIENTE (@GMAIL.COM)" value={realEmail} onChange={e => setRealEmail(e.target.value)} className="w-full bg-black border border-white/10 p-5 rounded-2xl text-[11px] font-black uppercase tracking-widest focus:border-red-600 outline-none text-white" />
-                                                        <input type="text" placeholder="WHATSAPP (DDD + NÚMERO)" value={realPhone} onChange={e => setRealPhone(formatPhone(e.target.value))} className="w-full bg-black border border-white/10 p-5 rounded-2xl text-[11px] font-black uppercase tracking-widest focus:border-red-600 outline-none text-white" />
+                                        <div className="p-8 space-y-8">
+                                            {/* Controle de Desconto e Estilo */}
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                <div className="bg-white/5 p-6 rounded-2xl border border-white/5 space-y-4">
+                                                    <div className="flex justify-between items-center">
+                                                        <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest block">Margem de Desconto</span>
+                                                        <span className={`text-2xl font-black italic tracking-tighter ${discount === 0 ? 'text-gray-400' : 'text-red-600'}`}>{discount === 0 ? 'P preço base' : `${discount}% OFF`}</span>
                                                     </div>
-                                                )}
-
-                                                <div>
-                                                    <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3 block">VALOR DA COBRANÇA (R$)</label>
-                                                    <input type="text" placeholder="EX: 29,90" value={pixAmount} onChange={e => setPixAmount(e.target.value)} className="w-full bg-black border border-white/10 p-8 rounded-3xl text-5xl font-black text-white italic tracking-tighter focus:border-red-600 outline-none placeholder:opacity-20" />
+                                                    <div className="flex gap-2 mb-2">
+                                                        {[0, 5, 10, 15, 20, 25, 50].map(v => (
+                                                            <button
+                                                                key={v}
+                                                                onClick={() => setDiscount(v)}
+                                                                className={`flex-1 py-2 rounded-lg text-[9px] font-black uppercase transition-all border ${discount === v ? 'bg-red-600 border-red-600 text-white' : 'bg-black/40 border-white/10 text-gray-500'}`}
+                                                            >
+                                                                {v === 0 ? 'Sem Promo' : `${v}%`}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                    <input type="range" min="0" max="50" step="5" value={discount} onChange={e => setDiscount(parseInt(e.target.value))} className="w-full h-2 bg-black rounded-full appearance-none cursor-pointer accent-red-600" />
+                                                    <div className="flex justify-between text-[7px] font-black text-gray-700 tracking-widest uppercase"><span>0%</span><span>25%</span><span>50%</span></div>
                                                 </div>
 
-                                                <button onClick={handleGeneratePixCode} disabled={pixLoading} className="w-full bg-red-600 hover:bg-red-700 text-white font-black py-6 rounded-3xl flex items-center justify-center gap-4 transition-all shadow-xl shadow-red-600/30 disabled:opacity-50 text-base italic tracking-tighter">
-                                                    {pixLoading ? <Loader2 className="animate-spin" /> : <><QrCode size={24} /> GERAR COBRANÇA AGORA</>}
-                                                </button>
+                                                <div className="bg-white/5 p-6 rounded-2xl border border-white/5 space-y-4">
+                                                    <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest block">Tom da Mensagem</span>
+                                                    <div className="grid grid-cols-4 gap-2">
+                                                        {[
+                                                            { id: 'aggressive', label: '🔥Braba' },
+                                                            { id: 'informal', label: '🤙Mano' },
+                                                            { id: 'formal', label: '👔Dr.' },
+                                                            { id: 'fun', label: '🎬Play' },
+                                                            { id: 'funny', label: '😂Zueira' },
+                                                            { id: 'scarcity', label: '⏳Corre' },
+                                                            { id: 'short', label: '⚡Papo' }
+                                                        ].map(s => (
+                                                            <button
+                                                                key={s.id}
+                                                                onClick={() => setMsgStyle(s.id as any)}
+                                                                className={`py-2 rounded-lg text-[8px] font-bold uppercase transition-all border ${msgStyle === s.id ? 'bg-red-600 border-red-600 text-white shadow-lg shadow-red-600/20' : 'bg-black border-white/10 text-gray-500 hover:border-white/20'}`}
+                                                            >
+                                                                {s.label}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                </div>
                                             </div>
 
-                                            <div className="w-full md:w-[350px] bg-white/[0.02] p-10 flex flex-col items-center justify-center space-y-8 relative overflow-hidden">
-                                                <div className="absolute top-0 right-0 w-40 h-40 bg-red-600/10 blur-[60px] rounded-full" />
-                                                <div className="absolute bottom-0 left-0 w-40 h-40 bg-red-600/10 blur-[60px] rounded-full" />
-
-                                                {!generatedPixString ? (
-                                                    <div className="text-center opacity-30 space-y-4">
-                                                        <QrCode size={100} className="mx-auto text-gray-500" />
-                                                        <p className="text-[10px] font-black uppercase tracking-[0.3em]">Aguardando Dados...</p>
-                                                    </div>
-                                                ) : (
-                                                    <div className="w-full text-center space-y-8 animate-in zoom-in duration-500">
-                                                        <div className="bg-white p-6 rounded-[2rem] shadow-2xl relative group">
-                                                            <img src={generatedPixImage} className="w-full h-auto rounded-xl" />
-                                                            <div className="absolute inset-0 bg-black/80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-[2rem]">
-                                                                <p className="text-white text-[10px] font-black uppercase tracking-widest px-4">{manualPixStatus === 'approved' ? 'PAGAMENTO APROVADO!' : 'MONITORANDO...'}</p>
-                                                            </div>
-                                                        </div>
-
-                                                        <div className="space-y-4">
-                                                            <button onClick={() => { navigator.clipboard.writeText(generatedPixString); alert('Pix Copiado!'); }} className="w-full bg-white text-black font-black py-4 rounded-2xl flex items-center justify-center gap-2 hover:bg-gray-200 transition-all">
-                                                                <Copy size={18} /> COPIAR CÓDIGO
-                                                            </button>
-                                                            {manualPixStatus === 'approved' && (
-                                                                <div className="flex items-center gap-3 justify-center text-green-500 animate-bounce">
-                                                                    <CheckCircle2 size={24} />
-                                                                    <span className="font-black italic text-xl uppercase tracking-tighter">RECEBIDO!</span>
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                )}
+                                            {/* Tabela de Opções */}
+                                            <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl overflow-hidden">
+                                                <table className="w-full text-left">
+                                                    <thead className="bg-white/5 text-[9px] font-black uppercase tracking-[0.2em] text-gray-500 border-b border-white/5">
+                                                        <tr>
+                                                            <th className="px-6 py-4">Opção</th>
+                                                            <th className="px-6 py-4">Prévia da Mensagem</th>
+                                                            <th className="px-6 py-4 text-right">Ação</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody className="divide-y divide-white/5">
+                                                        {['monthly', 'trimestral', 'semestral'].map(t => {
+                                                            const p = getProposal(t);
+                                                            return (
+                                                                <tr key={t} className="hover:bg-white/[0.01] transition-colors group">
+                                                                    <td className="px-6 py-6 min-w-[140px]">
+                                                                        <div className="flex items-center gap-3">
+                                                                            <span className="p-2 bg-red-600/10 rounded-lg text-red-600"><Star size={14} /></span>
+                                                                            <span className="text-[10px] font-black uppercase tracking-widest text-white">{t === 'monthly' ? 'Mensal' : t === 'trimestral' ? 'Trimestral' : 'Semestral'}</span>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td className="px-6 py-6">
+                                                                        <div className="bg-black/40 p-3 rounded-lg border border-white/5 max-w-md">
+                                                                            <p className="text-[10px] text-gray-400 leading-relaxed italic line-clamp-2">"{p.creative}"</p>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td className="px-6 py-6">
+                                                                        <div className="flex justify-end gap-2">
+                                                                            <button onClick={() => { navigator.clipboard.writeText(p.link); alert('Link Copiado!'); }} className="p-2 text-gray-500 hover:text-white transition-colors"><Copy size={16} /></button>
+                                                                            <a
+                                                                                href={`https://wa.me/${selectedLead.phone.replace(/\D/g, '')}?text=${encodeURIComponent(p.creative)}`}
+                                                                                target="_blank"
+                                                                                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-[9px] font-black uppercase flex items-center gap-2 shadow-lg shadow-green-600/20"
+                                                                            >
+                                                                                <Send size={12} /> ENVIAR
+                                                                            </a>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            );
+                                                        })}
+                                                    </tbody>
+                                                </table>
                                             </div>
                                         </div>
                                     </div>
-                                )
-                            }
+                                </div>
+                            )}
                         </div>
+                    )
+                    }
+
+                    {
+                        activeTab === 'pix' && (
+                            <div className="space-y-10">
+                                <div className="text-center md:text-left">
+                                    <h2 className="text-3xl font-black italic tracking-tighter uppercase text-white">Gerador de <span className="text-red-600">Cobranças</span></h2>
+                                    <p className="text-xs text-gray-500 mt-2 font-medium">Capture vendas offline gerando Pix manuais instantaneamente.</p>
+                                </div>
+
+                                <div className="max-w-4xl mx-auto bg-[#0a0a0a] border border-white/5 rounded-[3rem] overflow-hidden shadow-2xl flex flex-col md:flex-row">
+                                    <div className="flex-1 p-10 space-y-8 border-r border-white/5">
+                                        <div className="flex bg-black p-1.5 rounded-2xl border border-white/5">
+                                            <button onClick={() => setPixType('anon')} className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${pixType === 'anon' ? 'bg-red-600 text-white' : 'text-gray-500 hover:text-white'}`}>Anônimo</button>
+                                            <button onClick={() => setPixType('real')} className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${pixType === 'real' ? 'bg-white text-black' : 'text-gray-500 hover:text-white'}`}>Dados Reais</button>
+                                        </div>
+
+                                        {pixType === 'real' && (
+                                            <div className="grid grid-cols-1 gap-4">
+                                                <input type="email" placeholder="EMAIL DO CLIENTE (@GMAIL.COM)" value={realEmail} onChange={e => setRealEmail(e.target.value)} className="w-full bg-black border border-white/10 p-5 rounded-2xl text-[11px] font-black uppercase tracking-widest focus:border-red-600 outline-none text-white" />
+                                                <input type="text" placeholder="WHATSAPP (DDD + NÚMERO)" value={realPhone} onChange={e => setRealPhone(formatPhone(e.target.value))} className="w-full bg-black border border-white/10 p-5 rounded-2xl text-[11px] font-black uppercase tracking-widest focus:border-red-600 outline-none text-white" />
+                                            </div>
+                                        )}
+
+                                        <div>
+                                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3 block">VALOR DA COBRANÇA (R$)</label>
+                                            <input type="text" placeholder="EX: 29,90" value={pixAmount} onChange={e => setPixAmount(e.target.value)} className="w-full bg-black border border-white/10 p-8 rounded-3xl text-5xl font-black text-white italic tracking-tighter focus:border-red-600 outline-none placeholder:opacity-20" />
+                                        </div>
+
+                                        <button onClick={handleGeneratePixCode} disabled={pixLoading} className="w-full bg-red-600 hover:bg-red-700 text-white font-black py-6 rounded-3xl flex items-center justify-center gap-4 transition-all shadow-xl shadow-red-600/30 disabled:opacity-50 text-base italic tracking-tighter">
+                                            {pixLoading ? <Loader2 className="animate-spin" /> : <><QrCode size={24} /> GERAR COBRANÇA AGORA</>}
+                                        </button>
+                                    </div>
+
+                                    <div className="w-full md:w-[350px] bg-white/[0.02] p-10 flex flex-col items-center justify-center space-y-8 relative overflow-hidden">
+                                        <div className="absolute top-0 right-0 w-40 h-40 bg-red-600/10 blur-[60px] rounded-full" />
+                                        <div className="absolute bottom-0 left-0 w-40 h-40 bg-red-600/10 blur-[60px] rounded-full" />
+
+                                        {!generatedPixString ? (
+                                            <div className="text-center opacity-30 space-y-4">
+                                                <QrCode size={100} className="mx-auto text-gray-500" />
+                                                <p className="text-[10px] font-black uppercase tracking-[0.3em]">Aguardando Dados...</p>
+                                            </div>
+                                        ) : (
+                                            <div className="w-full text-center space-y-8 animate-in zoom-in duration-500">
+                                                <div className="bg-white p-6 rounded-[2rem] shadow-2xl relative group">
+                                                    <img src={generatedPixImage} className="w-full h-auto rounded-xl" />
+                                                    <div className="absolute inset-0 bg-black/80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-[2rem]">
+                                                        <p className="text-white text-[10px] font-black uppercase tracking-widest px-4">{manualPixStatus === 'approved' ? 'PAGAMENTO APROVADO!' : 'MONITORANDO...'}</p>
+                                                    </div>
+                                                </div>
+
+                                                <div className="space-y-4">
+                                                    <button onClick={() => { navigator.clipboard.writeText(generatedPixString); alert('Pix Copiado!'); }} className="w-full bg-white text-black font-black py-4 rounded-2xl flex items-center justify-center gap-2 hover:bg-gray-200 transition-all">
+                                                        <Copy size={18} /> COPIAR CÓDIGO
+                                                    </button>
+                                                    {manualPixStatus === 'approved' && (
+                                                        <div className="flex items-center gap-3 justify-center text-green-500 animate-bounce">
+                                                            <CheckCircle2 size={24} />
+                                                            <span className="font-black italic text-xl uppercase tracking-tighter">RECEBIDO!</span>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                    }
+                </div>
             </main>
         </div>
     );
