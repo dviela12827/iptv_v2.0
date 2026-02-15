@@ -503,7 +503,7 @@ export default function AdminDashboard() {
                                         { id: 'all', label: '📊 Geral' },
                                         { id: 'renove', label: '♻️ Renove' },
                                         { id: 'landing_page', label: '📽️ Landing' },
-                                        { id: 'painel-admin', label: '⌨️ Manual' }
+                                        { id: 'painel-admin', label: '⌨️ Dash Pix' }
                                     ].map(site => (
                                         <button
                                             key={site.id}
@@ -700,10 +700,10 @@ export default function AdminDashboard() {
                                                     </td>
                                                     <td className="px-8 py-6 text-center">
                                                         <span className={`text-[9px] font-black uppercase px-2 py-1 rounded border ${lead.origin === 'renove' ? 'text-orange-500 bg-orange-500/5 border-orange-500/10' :
-                                                                lead.origin === 'landing_page' ? 'text-red-500 bg-red-500/5 border-red-500/10' :
-                                                                    'text-blue-500 bg-blue-500/5 border-blue-500/10'
+                                                            lead.origin === 'landing_page' ? 'text-red-500 bg-red-500/5 border-red-500/10' :
+                                                                'text-blue-500 bg-blue-500/5 border-blue-500/10'
                                                             }`}>
-                                                            {lead.origin === 'renove' ? '♻️ Renove' : lead.origin === 'landing_page' ? '📽️ Landing' : '⌨️ Manual'}
+                                                            {lead.origin === 'renove' ? '♻️ Renove' : lead.origin === 'landing_page' ? '📽️ Landing' : '⌨️ Dash Pix'}
                                                         </span>
                                                     </td>
                                                     <td className="px-8 py-6 text-center">
