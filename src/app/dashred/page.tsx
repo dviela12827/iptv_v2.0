@@ -699,12 +699,14 @@ export default function AdminDashboard() {
                                                         </div>
                                                     </td>
                                                     <td className="px-8 py-6 text-center">
-                                                        <span className={`whitespace-nowrap text-[9px] font-black uppercase px-2 py-1 rounded border ${lead.origin === 'renove' ? 'text-orange-500 bg-orange-500/5 border-orange-500/10' :
-                                                            lead.origin === 'landing_page' ? 'text-red-500 bg-red-500/5 border-red-500/10' :
-                                                                'text-blue-500 bg-blue-500/5 border-blue-500/10'
-                                                            }`}>
-                                                            {lead.origin === 'renove' ? '♻️ Renove' : lead.origin === 'landing_page' ? '📽️ Landing' : '⌨️ Dash Pix'}
-                                                        </span>
+                                                        <div className="flex justify-center">
+                                                            <span className={`whitespace-nowrap text-[9px] font-black uppercase px-3 py-1.5 rounded border flex items-center gap-1.5 ${lead.origin === 'renove' ? 'text-orange-500 bg-orange-500/5 border-orange-500/10' :
+                                                                lead.origin === 'landing_page' ? 'text-red-500 bg-red-500/5 border-red-500/10' :
+                                                                    'text-blue-500 bg-blue-500/5 border-blue-500/10'
+                                                                }`}>
+                                                                {lead.origin === 'renove' ? '♻️ Renove' : lead.origin === 'landing_page' ? '📽️ Landing' : '⌨️ Dash Pix'}
+                                                            </span>
+                                                        </div>
                                                     </td>
                                                     <td className="px-8 py-6 text-center">
                                                         <span className={`inline-block px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${lead.status === 'approved' ? 'bg-green-500/10 text-green-500 border border-green-500/20' :
