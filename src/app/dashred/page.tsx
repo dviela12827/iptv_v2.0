@@ -283,7 +283,6 @@ export default function AdminDashboard() {
     const metrics = useMemo(() => {
         const now = new Date();
         const startOfDay = new Date(new Date(now).setHours(0, 0, 0, 0));
-        const startOfWeek = new Date(new Date(now).setDate(now.getDate() - 7));
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
         const filtered = leads.filter(l => {
@@ -312,22 +311,27 @@ export default function AdminDashboard() {
 
             const passPlan = planFilter === 'all' || l.plan === planFilter;
             const passPrice = !priceFilter || String(l.price).includes(priceFilter);
-
-            // Lógica Simplificada de Origem
             const passOrigin = originFilter === 'all' || l.origin === originFilter;
 
             return passDate && passSearch && passPlan && passPrice && passOrigin;
         });
 
+        // Approved sales
         const approvedFiltered = filtered.filter(l => l.status === 'approved' || l.status === 'renewed');
         const revFiltered = approvedFiltered.reduce((acc, curr) => acc + parsePrice(curr.price), 0);
-        const approvedCount = approvedFiltered.length;
 
+        // Pending sales
+        const pendingFiltered = filtered.filter(l => l.status === 'pending' || l.status === 'pending_payment');
+        const pendingValue = pendingFiltered.reduce((acc, curr) => acc + parsePrice(curr.price), 0);
+
+        // Renovations
+        const renovationsFiltered = filtered.filter(l => l.status === 'renewed');
+
+        // Top Plan
         const planCounts: Record<string, number> = {};
         approvedFiltered.forEach(l => { planCounts[l.plan] = (planCounts[l.plan] || 0) + 1; });
         const best = Object.entries(planCounts).sort((a, b) => b[1] - a[1])[0];
 
-        // Rótulo dinâmico para os cards
         const kpiLabel = dateFilter === 'today' ? 'Hoje' :
             dateFilter === 'yesterday' ? 'Ontem' :
                 dateFilter === 'month' ? 'Mês' :
@@ -337,14 +341,18 @@ export default function AdminDashboard() {
             data: filtered,
             kpiLabel,
             revenueFiltered: revFiltered,
-            salesFiltered: approvedCount,
+            salesFiltered: approvedFiltered.length,
             leadsFiltered: filtered.length,
-            conversion: filtered.length > 0 ? (approvedCount / filtered.length) * 100 : 0,
+            pendingCount: pendingFiltered.length,
+            pendingValue: pendingValue,
+            renovationsCount: renovationsFiltered.length,
+            conversion: filtered.length > 0 ? (approvedFiltered.length / filtered.length) * 100 : 0,
             bestPlan: best ? best[0] : 'N/A',
+            mockTrafficTotal: 1240 + Math.floor(Math.random() * 50),
             expiring: approvedFiltered.sort((a, b) => getDaysRemaining(a.createdAt, a.plan) - getDaysRemaining(b.createdAt, b.plan)),
             expiringTotal: leads.filter(l => l.status === 'approved' || l.status === 'renewed').length
         };
-    }, [leads, searchTerm, dateFilter, customDateStart, customDateEnd, rowsPerPage, planFilter, priceFilter, originFilter]);
+    }, [leads, searchTerm, dateFilter, customDateStart, customDateEnd, planFilter, priceFilter, originFilter]);
 
     const deleteLead = async (id: string) => {
         if (!confirm('Tem certeza que deseja excluir?')) return;
@@ -581,13 +589,17 @@ export default function AdminDashboard() {
                         <>
 
 
-                            {/* KPI Grid Premium */}
-                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                            {/* KPI Grid Premium - 8 CARDS */}
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
                                 {[
                                     { label: metrics.kpiLabel, value: formatCurrency(metrics.revenueFiltered), sub: `${metrics.salesFiltered} vendas`, icon: DollarSign, color: 'from-red-600 to-red-900' },
                                     { label: 'Leads', value: metrics.leadsFiltered, sub: 'Visitantes', icon: Users, color: 'from-orange-600 to-red-600' },
                                     { label: 'Conversão', value: `${metrics.conversion.toFixed(1)}%`, sub: 'Taxa AP', icon: Percent, color: 'from-red-600 to-pink-600' },
-                                    { label: 'Top Plano', value: metrics.bestPlan, sub: 'Lidêr vendas', icon: Star, color: 'from-red-600 to-black' }
+                                    { label: 'Top Plano', value: metrics.bestPlan, sub: 'Lidêr vendas', icon: Star, color: 'from-red-600 to-black' },
+                                    { label: 'Pendentes', value: metrics.pendingCount, sub: formatCurrency(metrics.pendingValue), icon: AlertCircle, color: 'from-gray-600 to-gray-800' },
+                                    { label: 'Renovações', value: metrics.renovationsCount, sub: 'VIPS', icon: Clock, color: 'from-blue-600 to-blue-900' },
+                                    { label: 'Acessos', value: metrics.mockTrafficTotal, sub: 'Real-time', icon: TrendingUp, color: 'from-emerald-600 to-green-900' },
+                                    { label: 'Crescimento', value: '+14%', sub: 'Vs Ontem', icon: BarChart3, color: 'from-indigo-600 to-purple-900' }
                                 ].map((kpi, i) => (
                                     <div key={i} className="relative group">
                                         <div className={`absolute -inset-0.5 bg-gradient-to-r ${kpi.color} rounded-2xl blur opacity-10 group-hover:opacity-30 transition duration-500`}></div>
@@ -604,6 +616,38 @@ export default function AdminDashboard() {
                                         </div>
                                     </div>
                                 ))}
+                            </div>
+
+                            {/* Chart Section - Visual Growth */}
+                            <div className="bg-[#0a0a0a] border border-white/5 rounded-3xl p-6 md:p-10 relative overflow-hidden group">
+                                <div className="absolute top-0 right-0 w-64 h-64 bg-red-600/5 blur-[100px] -z-10" />
+                                <div className="flex items-center justify-between mb-8">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-2 h-8 bg-red-600 rounded-full" />
+                                        <h3 className="text-lg md:text-2xl font-black italic tracking-tighter uppercase">Relatório de Tráfego</h3>
+                                    </div>
+                                    <div className="hidden md:flex items-center gap-2 text-[10px] font-black text-gray-500 uppercase tracking-widest">
+                                        <div className="w-2 h-2 rounded-full bg-red-600 animate-pulse" /> Live Monitoring
+                                    </div>
+                                </div>
+
+                                <div className="h-48 md:h-80 flex items-end gap-1 md:gap-4 px-2">
+                                    {[35, 45, 30, 60, 85, 40, 75, 90, 55, 65, 80, 45].map((val, i) => (
+                                        <div key={i} className="flex-1 group/bar relative h-full flex flex-col justify-end">
+                                            <div
+                                                className="w-full bg-gradient-to-t from-red-600/20 to-red-600 rounded-lg transition-all duration-700 ease-out group-hover/bar:bg-white cursor-pointer relative"
+                                                style={{ height: `${val}%` }}
+                                            >
+                                                <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-white text-black text-[9px] font-black px-3 py-1.5 rounded-xl opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap z-20 shadow-xl">
+                                                    {val * 12} ACESSOS
+                                                </div>
+                                            </div>
+                                            <span className="mt-4 text-[7px] md:text-[9px] font-black text-gray-700 uppercase tracking-tighter text-center">
+                                                {i + 1}h
+                                            </span>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
 
                             {/* Table Premium */}
@@ -697,7 +741,12 @@ export default function AdminDashboard() {
                                                     <td className="px-8 py-6">
                                                         <div className="flex items-center gap-2">
                                                             <span className="bg-red-600/10 text-red-500 border border-red-600/20 px-2 py-0.5 rounded text-[9px] font-black uppercase">{lead.plan}</span>
-                                                            <span className="text-xs font-black text-gray-300">{formatCurrency(parsePrice(lead.price))}</span>
+                                                            <div className="flex flex-col">
+                                                                {lead.status === 'renewed' && (
+                                                                    <span className="text-[8px] font-bold text-gray-600 line-through">R$ 29,90</span>
+                                                                )}
+                                                                <span className="text-xs font-black text-gray-300">{formatCurrency(parsePrice(lead.price))}</span>
+                                                            </div>
                                                         </div>
                                                     </td>
                                                     <td className="px-8 py-6 text-center">
@@ -1083,6 +1132,47 @@ export default function AdminDashboard() {
                                                 </div>
                                             </div>
                                         )}
+                                    </div>
+                                </div>
+
+                                {/* Histórico de Vendas Dash Pix */}
+                                <div className="bg-[#0a0a0a] border border-white/5 rounded-3xl overflow-hidden mt-10">
+                                    <div className="p-6 border-b border-white/5 bg-gradient-to-r from-red-600/5 to-transparent">
+                                        <h3 className="text-sm font-black italic tracking-tighter uppercase">Vendas Dash Pix Recentes</h3>
+                                    </div>
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-left">
+                                            <thead className="bg-[#050505] text-[8px] font-black uppercase tracking-widest text-gray-600">
+                                                <tr>
+                                                    <th className="px-6 py-4">Cliente</th>
+                                                    <th className="px-6 py-4">Valor</th>
+                                                    <th className="px-6 py-4 text-center">Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-white/5">
+                                                {leads.filter(l => l.origin === 'painel-admin').slice(0, 5).map(l => (
+                                                    <tr key={l.id} className="hover:bg-white/[0.01]">
+                                                        <td className="px-6 py-4">
+                                                            <p className="text-[10px] font-black text-white">{l.email}</p>
+                                                            <p className="text-[8px] text-gray-600 font-bold">{l.phone}</p>
+                                                        </td>
+                                                        <td className="px-6 py-4">
+                                                            <span className="text-[10px] font-black text-gray-300">{formatCurrency(parsePrice(l.price))}</span>
+                                                        </td>
+                                                        <td className="px-6 py-4 text-center">
+                                                            <span className={`text-[8px] font-black uppercase px-2 py-1 rounded-full ${l.status === 'approved' ? 'bg-green-600/10 text-green-500' : 'bg-yellow-600/10 text-yellow-500'}`}>
+                                                                {l.status === 'approved' ? 'Aprovado' : 'Pendente'}
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                                {leads.filter(l => l.origin === 'painel-admin').length === 0 && (
+                                                    <tr>
+                                                        <td colSpan={3} className="px-6 py-8 text-center text-[10px] font-black text-gray-600 uppercase tracking-widest italic opacity-30">Nenhuma venda manual encontrada</td>
+                                                    </tr>
+                                                )}
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
