@@ -271,7 +271,10 @@ export default function AdminDashboard() {
         if (!isAuthenticated) return;
         setLoading(true);
         const unsubscribe = onSnapshot(query(collection(db, "leads"), orderBy("createdAt", "desc")), (snapshot) => {
-            setLeads(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Lead)));
+            const allLeads = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Lead));
+            // Filtra removendo qualquer coisa que venha da Renove
+            const filteredLeads = allLeads.filter(l => l.origin !== 'renove' && l.origin !== 'Renove');
+            setLeads(filteredLeads);
             setLoading(false);
         });
         return () => unsubscribe();
@@ -501,7 +504,6 @@ export default function AdminDashboard() {
                                 <div className="flex items-center gap-1 bg-[#0a0a0a] p-1.5 rounded-[2rem] border border-white/10 shadow-2xl overflow-x-auto max-w-full no-scrollbar">
                                     {[
                                         { id: 'all', label: '📊 Geral' },
-                                        { id: 'renove', label: '♻️ Renove' },
                                         { id: 'landing_page', label: '📽️ Landing' },
                                         { id: 'painel-admin', label: '⌨️ Dash Pix' }
                                     ].map(site => (
@@ -700,11 +702,10 @@ export default function AdminDashboard() {
                                                     </td>
                                                     <td className="px-8 py-6 text-center">
                                                         <div className="flex justify-center">
-                                                            <span className={`whitespace-nowrap text-[9px] font-black uppercase px-3 py-1.5 rounded border flex items-center gap-1.5 ${lead.origin === 'renove' ? 'text-orange-500 bg-orange-500/5 border-orange-500/10' :
-                                                                lead.origin === 'landing_page' ? 'text-red-500 bg-red-500/5 border-red-500/10' :
-                                                                    'text-blue-500 bg-blue-500/5 border-blue-500/10'
+                                                            <span className={`whitespace-nowrap text-[9px] font-black uppercase px-3 py-1.5 rounded border flex items-center gap-1.5 ${lead.origin === 'landing_page' ? 'text-red-500 bg-red-500/5 border-red-500/10' :
+                                                                'text-blue-500 bg-blue-500/5 border-blue-500/10'
                                                                 }`}>
-                                                                {lead.origin === 'renove' ? '♻️ Renove' : lead.origin === 'landing_page' ? '📽️ Landing' : '⌨️ Dash Pix'}
+                                                                {lead.origin === 'landing_page' ? '📽️ Landing' : '⌨️ Dash Pix'}
                                                             </span>
                                                         </div>
                                                     </td>
