@@ -595,59 +595,26 @@ export default function AdminDashboard() {
                                     { label: metrics.kpiLabel, value: formatCurrency(metrics.revenueFiltered), sub: `${metrics.salesFiltered} vendas`, icon: DollarSign, color: 'from-red-600 to-red-900' },
                                     { label: 'Leads', value: metrics.leadsFiltered, sub: 'Visitantes', icon: Users, color: 'from-orange-600 to-red-600' },
                                     { label: 'Conversão', value: `${metrics.conversion.toFixed(1)}%`, sub: 'Taxa AP', icon: Percent, color: 'from-red-600 to-pink-600' },
-                                    { label: 'Top Plano', value: metrics.bestPlan, sub: 'Lidêr vendas', icon: Star, color: 'from-red-600 to-black' },
+                                    { label: 'Top Plano', value: metrics.bestPlan, sub: 'O mais vendido', icon: Star, color: 'from-red-600 to-black' },
                                     { label: 'Pendentes', value: metrics.pendingCount, sub: formatCurrency(metrics.pendingValue), icon: AlertCircle, color: 'from-gray-600 to-gray-800' },
-                                    { label: 'Renovações', value: metrics.renovationsCount, sub: 'VIPS', icon: Clock, color: 'from-blue-600 to-blue-900' },
-                                    { label: 'Acessos', value: metrics.mockTrafficTotal, sub: 'Real-time', icon: TrendingUp, color: 'from-emerald-600 to-green-900' },
-                                    { label: 'Crescimento', value: '+14%', sub: 'Vs Ontem', icon: BarChart3, color: 'from-indigo-600 to-purple-900' }
+                                    { label: 'Renovações', value: metrics.renovationsCount, sub: 'Público VIP', icon: Clock, color: 'from-blue-600 to-blue-900' },
+                                    { label: 'Ticket Médio', value: formatCurrency(metrics.salesFiltered > 0 ? metrics.revenueFiltered / metrics.salesFiltered : 0), sub: 'Por venda', icon: TrendingUp, color: 'from-emerald-600 to-green-900' },
+                                    { label: 'Vendas Hoje', value: leads.filter(l => l.createdAt?.toDate().toDateString() === new Date().toDateString() && (l.status === 'approved' || l.status === 'renewed')).length, sub: 'Meta 20/dia', icon: BarChart3, color: 'from-indigo-600 to-purple-900' }
                                 ].map((kpi, i) => (
                                     <div key={i} className="relative group">
                                         <div className={`absolute -inset-0.5 bg-gradient-to-r ${kpi.color} rounded-2xl blur opacity-10 group-hover:opacity-30 transition duration-500`}></div>
-                                        <div className="relative bg-[#0a0a0a] p-4 md:p-8 rounded-2xl md:rounded-3xl border border-white/5 space-y-3 md:space-y-4">
-                                            <div className={`w-8 h-8 md:w-12 md:h-12 rounded-lg md:rounded-2xl bg-gradient-to-br ${kpi.color} flex items-center justify-center shadow-lg`}>
-                                                <kpi.icon size={16} className="text-white md:hidden" />
-                                                <kpi.icon size={20} className="text-white hidden md:block" />
+                                        <div className="relative bg-[#0a0a0a] p-4 md:p-6 rounded-2xl border border-white/5 h-full flex flex-col justify-between overflow-hidden">
+                                            <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${kpi.color} flex items-center justify-center shadow-lg mb-4`}>
+                                                <kpi.icon size={16} className="text-white" />
                                             </div>
                                             <div>
-                                                <h3 className="text-[8px] md:text-[10px] font-black text-gray-500 uppercase tracking-widest">{kpi.label}</h3>
-                                                <p className="text-lg md:text-3xl font-black text-white italic tracking-tighter mt-1">{kpi.value}</p>
-                                                <p className="text-[7px] md:text-[9px] text-gray-600 font-bold uppercase mt-1 md:mt-2">{kpi.sub}</p>
+                                                <h3 className="text-[8px] font-black text-gray-500 uppercase tracking-widest">{kpi.label}</h3>
+                                                <p className="text-xl md:text-2xl font-black text-white italic tracking-tighter mt-1">{kpi.value}</p>
+                                                <p className="text-[7px] text-gray-600 font-bold uppercase mt-1">{kpi.sub}</p>
                                             </div>
                                         </div>
                                     </div>
                                 ))}
-                            </div>
-
-                            {/* Chart Section - Visual Growth */}
-                            <div className="bg-[#0a0a0a] border border-white/5 rounded-3xl p-6 md:p-10 relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 w-64 h-64 bg-red-600/5 blur-[100px] -z-10" />
-                                <div className="flex items-center justify-between mb-8">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-2 h-8 bg-red-600 rounded-full" />
-                                        <h3 className="text-lg md:text-2xl font-black italic tracking-tighter uppercase">Relatório de Tráfego</h3>
-                                    </div>
-                                    <div className="hidden md:flex items-center gap-2 text-[10px] font-black text-gray-500 uppercase tracking-widest">
-                                        <div className="w-2 h-2 rounded-full bg-red-600 animate-pulse" /> Live Monitoring
-                                    </div>
-                                </div>
-
-                                <div className="h-48 md:h-80 flex items-end gap-1 md:gap-4 px-2">
-                                    {[35, 45, 30, 60, 85, 40, 75, 90, 55, 65, 80, 45].map((val, i) => (
-                                        <div key={i} className="flex-1 group/bar relative h-full flex flex-col justify-end">
-                                            <div
-                                                className="w-full bg-gradient-to-t from-red-600/20 to-red-600 rounded-lg transition-all duration-700 ease-out group-hover/bar:bg-white cursor-pointer relative"
-                                                style={{ height: `${val}%` }}
-                                            >
-                                                <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-white text-black text-[9px] font-black px-3 py-1.5 rounded-xl opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap z-20 shadow-xl">
-                                                    {val * 12} ACESSOS
-                                                </div>
-                                            </div>
-                                            <span className="mt-4 text-[7px] md:text-[9px] font-black text-gray-700 uppercase tracking-tighter text-center">
-                                                {i + 1}h
-                                            </span>
-                                        </div>
-                                    ))}
-                                </div>
                             </div>
 
                             {/* Table Premium */}
