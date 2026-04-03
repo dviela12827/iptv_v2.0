@@ -97,6 +97,7 @@ export default function AdminDashboard() {
     const [originFilter, setOriginFilter] = useState('all');
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isDateDropdownOpen, setIsDateDropdownOpen] = useState(false);
+    const [tableTab, setTableTab] = useState<'approved' | 'pending'>('approved');
 
     const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
     const [discount, setDiscount] = useState(10);
@@ -320,37 +321,67 @@ export default function AdminDashboard() {
         const approvedFiltered = filtered.filter(l => l.status === 'approved' || l.status === 'renewed');
         const revFiltered = approvedFiltered.reduce((acc, curr) => acc + parsePrice(curr.price), 0);
 
+        // Lucro (faturamento - taxas PushinPay ~1.99%)
+        const lucroFiltered = revFiltered * 0.98;
+
         // Pending sales
         const pendingFiltered = filtered.filter(l => l.status === 'pending' || l.status === 'pending_payment');
         const pendingValue = pendingFiltered.reduce((acc, curr) => acc + parsePrice(curr.price), 0);
 
+        // Stale pending (>50min sem pagar)
+        const stalePending = pendingFiltered.filter(l => {
+            if (!l.createdAt) return false;
+            const created = l.createdAt.toDate().getTime();
+            return (Date.now() - created) > 50 * 60 * 1000;
+        });
+
         // Renovations
         const renovationsFiltered = filtered.filter(l => l.status === 'renewed');
 
-        // Top Plan
-        const planCounts: Record<string, number> = {};
-        approvedFiltered.forEach(l => { planCounts[l.plan] = (planCounts[l.plan] || 0) + 1; });
-        const best = Object.entries(planCounts).sort((a, b) => b[1] - a[1])[0];
+        // Refunds
+        const refundedFiltered = filtered.filter(l => l.status === 'refunded' || l.status === 'reembolso');
+        const refundedValue = refundedFiltered.reduce((acc, curr) => acc + parsePrice(curr.price), 0);
+
+        // Assinaturas ativas (approved/renewed com dias restantes > 0)
+        const allActive = leads.filter(l => (l.status === 'approved' || l.status === 'renewed'));
+        const activeSubscriptions = allActive.filter(l => getDaysRemaining(l.createdAt, l.plan) > 0);
+
+        // Assinantes novos (primeiro mês) vs recorrentes (renewed)
+        const newSubscribers = filtered.filter(l => l.status === 'approved' && l.origin !== 'renove');
+        const recurringSubscribers = filtered.filter(l => l.status === 'renewed');
+
+        // Vendas hoje
+        const salesToday = leads.filter(l => l.createdAt?.toDate().toDateString() === new Date().toDateString() && (l.status === 'approved' || l.status === 'renewed')).length;
 
         const kpiLabel = dateFilter === 'today' ? 'Hoje' :
             dateFilter === 'yesterday' ? 'Ontem' :
                 dateFilter === 'month' ? 'Mês' :
                     dateFilter === 'custom' ? 'Período' : 'Todo';
 
+        // Expiring: filtrar quem já venceu há mais de 7 dias
+        const expiringAll = allActive.filter(l => getDaysRemaining(l.createdAt, l.plan) > -7);
+        const expiringSorted = expiringAll.sort((a, b) => getDaysRemaining(a.createdAt, a.plan) - getDaysRemaining(b.createdAt, b.plan));
+
         return {
             data: filtered,
             kpiLabel,
             revenueFiltered: revFiltered,
+            lucroFiltered,
             salesFiltered: approvedFiltered.length,
             leadsFiltered: filtered.length,
             pendingCount: pendingFiltered.length,
-            pendingValue: pendingValue,
+            pendingValue,
+            stalePending,
             renovationsCount: renovationsFiltered.length,
+            refundedCount: refundedFiltered.length,
+            refundedValue,
+            activeSubscriptions: activeSubscriptions.length,
+            newSubscribers: newSubscribers.length,
+            recurringSubscribers: recurringSubscribers.length,
+            salesToday,
             conversion: filtered.length > 0 ? (approvedFiltered.length / filtered.length) * 100 : 0,
-            bestPlan: best ? best[0] : 'N/A',
-            mockTrafficTotal: 1240 + Math.floor(Math.random() * 50),
-            expiring: approvedFiltered.sort((a, b) => getDaysRemaining(a.createdAt, a.plan) - getDaysRemaining(b.createdAt, b.plan)),
-            expiringTotal: leads.filter(l => l.status === 'approved' || l.status === 'renewed').length
+            expiring: expiringSorted,
+            expiringTotal: allActive.length
         };
     }, [leads, searchTerm, dateFilter, customDateStart, customDateEnd, planFilter, priceFilter, originFilter]);
 
@@ -589,17 +620,19 @@ export default function AdminDashboard() {
                         <>
 
 
-                            {/* KPI Grid Premium - 8 CARDS */}
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                            {/* KPI Grid Premium - 10 CARDS */}
+                            <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
                                 {[
-                                    { label: metrics.kpiLabel, value: formatCurrency(metrics.revenueFiltered), sub: `${metrics.salesFiltered} vendas`, icon: DollarSign, color: 'from-red-600 to-red-900' },
+                                    { label: 'Faturamento', value: formatCurrency(metrics.revenueFiltered), sub: `${metrics.salesFiltered} vendas`, icon: DollarSign, color: 'from-red-600 to-red-900' },
+                                    { label: 'Lucro', value: formatCurrency(metrics.lucroFiltered), sub: 'Após taxas', icon: TrendingUp, color: 'from-emerald-600 to-green-900' },
                                     { label: 'Leads', value: metrics.leadsFiltered, sub: 'Visitantes', icon: Users, color: 'from-orange-600 to-red-600' },
+                                    { label: 'Vendas Hoje', value: metrics.salesToday, sub: 'Meta 20/dia', icon: BarChart3, color: 'from-indigo-600 to-purple-900' },
                                     { label: 'Conversão', value: `${metrics.conversion.toFixed(1)}%`, sub: 'Taxa AP', icon: Percent, color: 'from-red-600 to-pink-600' },
-                                    { label: 'Top Plano', value: metrics.bestPlan, sub: 'O mais vendido', icon: Star, color: 'from-red-600 to-black' },
-                                    { label: 'Pendentes', value: metrics.pendingCount, sub: formatCurrency(metrics.pendingValue), icon: AlertCircle, color: 'from-gray-600 to-gray-800' },
-                                    { label: 'Renovações', value: metrics.renovationsCount, sub: 'Público VIP', icon: Clock, color: 'from-blue-600 to-blue-900' },
-                                    { label: 'Ticket Médio', value: formatCurrency(metrics.salesFiltered > 0 ? metrics.revenueFiltered / metrics.salesFiltered : 0), sub: 'Por venda', icon: TrendingUp, color: 'from-emerald-600 to-green-900' },
-                                    { label: 'Vendas Hoje', value: leads.filter(l => l.createdAt?.toDate().toDateString() === new Date().toDateString() && (l.status === 'approved' || l.status === 'renewed')).length, sub: 'Meta 20/dia', icon: BarChart3, color: 'from-indigo-600 to-purple-900' }
+                                    { label: 'Pendentes', value: metrics.pendingCount, sub: formatCurrency(metrics.pendingValue), icon: AlertCircle, color: 'from-yellow-600 to-yellow-900' },
+                                    { label: 'Renovações', value: metrics.renovationsCount, sub: 'Recorrentes', icon: Clock, color: 'from-blue-600 to-blue-900' },
+                                    { label: 'Reembolso', value: metrics.refundedCount, sub: formatCurrency(metrics.refundedValue), icon: AlertCircle, color: 'from-gray-600 to-gray-800' },
+                                    { label: 'Assinaturas Ativas', value: metrics.activeSubscriptions, sub: 'Planos vigentes', icon: Shield, color: 'from-green-600 to-emerald-900' },
+                                    { label: 'Novos Assinantes', value: metrics.newSubscribers, sub: `${metrics.recurringSubscribers} recorrentes`, icon: Star, color: 'from-violet-600 to-purple-900' }
                                 ].map((kpi, i) => (
                                     <div key={i} className="relative group">
                                         <div className={`absolute -inset-0.5 bg-gradient-to-r ${kpi.color} rounded-2xl blur opacity-10 group-hover:opacity-30 transition duration-500`}></div>
@@ -621,7 +654,13 @@ export default function AdminDashboard() {
                             <div className="bg-[#0a0a0a] border border-white/5 rounded-3xl overflow-hidden shadow-2xl transition-all">
                                 <div className="p-8 border-b border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 bg-gradient-to-r from-red-600/5 to-transparent">
                                     <div className="flex items-center gap-4">
-                                        <h3 className="text-lg font-black italic tracking-tighter uppercase">Últimas Transações</h3>
+                                        <div className="flex items-center gap-1 bg-black p-1 rounded-xl border border-white/5">
+                                            <button onClick={() => { setTableTab('approved'); setCurrentPage(1); }} className={`px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${tableTab === 'approved' ? 'bg-green-600 text-white' : 'text-gray-500 hover:text-white'}`}>Aprovados</button>
+                                            <button onClick={() => { setTableTab('pending'); setCurrentPage(1); }} className={`px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${tableTab === 'pending' ? 'bg-yellow-600 text-white' : 'text-gray-500 hover:text-white'}`}>
+                                                Pendentes
+                                                {metrics.pendingCount > 0 && <span className="bg-yellow-500 text-black text-[8px] font-black w-5 h-5 rounded-full flex items-center justify-center">{metrics.pendingCount}</span>}
+                                            </button>
+                                        </div>
                                         {selectedLeads.length > 0 && (
                                             <button
                                                 onClick={deleteSelectedLeads}
@@ -673,9 +712,17 @@ export default function AdminDashboard() {
                                                     <input
                                                         type="checkbox"
                                                         className="w-4 h-4 rounded border-white/10 bg-black accent-red-600 cursor-pointer"
-                                                        checked={selectedLeads.length === metrics.data.length && metrics.data.length > 0}
+                                                        checked={(() => {
+                                                            const tabData = tableTab === 'approved'
+                                                                ? metrics.data.filter(l => l.status === 'approved' || l.status === 'renewed')
+                                                                : metrics.data.filter(l => l.status === 'pending' || l.status === 'pending_payment');
+                                                            return selectedLeads.length === tabData.length && tabData.length > 0;
+                                                        })()}
                                                         onChange={(e) => {
-                                                            if (e.target.checked) setSelectedLeads(metrics.data.map(l => l.id));
+                                                            const tabData = tableTab === 'approved'
+                                                                ? metrics.data.filter(l => l.status === 'approved' || l.status === 'renewed')
+                                                                : metrics.data.filter(l => l.status === 'pending' || l.status === 'pending_payment');
+                                                            if (e.target.checked) setSelectedLeads(tabData.map(l => l.id));
                                                             else setSelectedLeads([]);
                                                         }}
                                                     />
@@ -688,7 +735,10 @@ export default function AdminDashboard() {
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-white/5">
-                                            {metrics.data.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage).map(lead => (
+                                            {(tableTab === 'approved'
+                                                ? metrics.data.filter(l => l.status === 'approved' || l.status === 'renewed')
+                                                : metrics.data.filter(l => l.status === 'pending' || l.status === 'pending_payment')
+                                            ).slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage).map(lead => (
                                                 <tr key={lead.id} className={`hover:bg-white/[0.02] transition-colors group ${selectedLeads.includes(lead.id) ? 'bg-red-600/5' : ''}`}>
                                                     <td className="px-8 py-6">
                                                         <input
@@ -747,50 +797,58 @@ export default function AdminDashboard() {
                                 </div>
 
                                 {/* Paginação */}
-                                <div className="p-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 bg-[#050505]">
-                                    <div className="flex items-center gap-4">
-                                        <label className="text-[10px] font-black uppercase text-gray-500 tracking-widest">Exibir:</label>
-                                        <select
-                                            value={rowsPerPage}
-                                            onChange={e => { setRowsPerPage(Number(e.target.value)); setCurrentPage(1); }}
-                                            className="bg-black border border-white/10 rounded-lg px-3 py-1.5 text-[10px] font-black text-white focus:border-red-600 outline-none"
-                                        >
-                                            {[5, 10, 20, 50, 100].map(n => <option key={n} value={n}>{n} itens</option>)}
-                                        </select>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <button
-                                            disabled={currentPage === 1}
-                                            onClick={() => setCurrentPage(prev => prev - 1)}
-                                            className="p-2 border border-white/10 rounded-lg hover:bg-white/5 disabled:opacity-20 transition-all text-gray-400"
-                                        >
-                                            <Calendar size={14} className="rotate-90" />
-                                        </button>
-                                        {Array.from({ length: Math.ceil(metrics.data.length / rowsPerPage) }, (_, i) => i + 1)
-                                            .filter(p => p === 1 || p === Math.ceil(metrics.data.length / rowsPerPage) || Math.abs(p - currentPage) <= 1)
-                                            .map((p, i, arr) => (
-                                                <Fragment key={p}>
-                                                    {i > 0 && arr[i - 1] !== p - 1 && <span className="text-gray-600">...</span>}
-                                                    <button
-                                                        onClick={() => setCurrentPage(p)}
-                                                        className={`w-8 h-8 rounded-lg text-[10px] font-black transition-all ${currentPage === p ? 'bg-red-600 text-white' : 'hover:bg-white/5 text-gray-500'}`}
-                                                    >
-                                                        {p}
-                                                    </button>
-                                                </Fragment>
-                                            ))}
-                                        <button
-                                            disabled={currentPage === Math.ceil(metrics.data.length / rowsPerPage)}
-                                            onClick={() => setCurrentPage(prev => prev + 1)}
-                                            className="p-2 border border-white/10 rounded-lg hover:bg-white/5 disabled:opacity-20 transition-all text-gray-400"
-                                        >
-                                            <Calendar size={14} className="-rotate-90" />
-                                        </button>
-                                    </div>
-                                    <div className="text-[9px] font-black text-gray-600 uppercase tracking-widest">
-                                        Mostrando {Math.min(metrics.data.length, (currentPage - 1) * rowsPerPage + 1)}-{Math.min(metrics.data.length, currentPage * rowsPerPage)} de {metrics.data.length}
-                                    </div>
-                                </div>
+                                {(() => {
+                                    const tableData = tableTab === 'approved'
+                                        ? metrics.data.filter(l => l.status === 'approved' || l.status === 'renewed')
+                                        : metrics.data.filter(l => l.status === 'pending' || l.status === 'pending_payment');
+                                    const totalPages = Math.ceil(tableData.length / rowsPerPage);
+                                    return (
+                                        <div className="p-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 bg-[#050505]">
+                                            <div className="flex items-center gap-4">
+                                                <label className="text-[10px] font-black uppercase text-gray-500 tracking-widest">Exibir:</label>
+                                                <select
+                                                    value={rowsPerPage}
+                                                    onChange={e => { setRowsPerPage(Number(e.target.value)); setCurrentPage(1); }}
+                                                    className="bg-black border border-white/10 rounded-lg px-3 py-1.5 text-[10px] font-black text-white focus:border-red-600 outline-none"
+                                                >
+                                                    {[5, 10, 20, 50, 100].map(n => <option key={n} value={n}>{n} itens</option>)}
+                                                </select>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <button
+                                                    disabled={currentPage === 1}
+                                                    onClick={() => setCurrentPage(prev => prev - 1)}
+                                                    className="p-2 border border-white/10 rounded-lg hover:bg-white/5 disabled:opacity-20 transition-all text-gray-400"
+                                                >
+                                                    <Calendar size={14} className="rotate-90" />
+                                                </button>
+                                                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                                                    .filter(p => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
+                                                    .map((p, i, arr) => (
+                                                        <Fragment key={p}>
+                                                            {i > 0 && arr[i - 1] !== p - 1 && <span className="text-gray-600">...</span>}
+                                                            <button
+                                                                onClick={() => setCurrentPage(p)}
+                                                                className={`w-8 h-8 rounded-lg text-[10px] font-black transition-all ${currentPage === p ? 'bg-red-600 text-white' : 'hover:bg-white/5 text-gray-500'}`}
+                                                            >
+                                                                {p}
+                                                            </button>
+                                                        </Fragment>
+                                                    ))}
+                                                <button
+                                                    disabled={currentPage === totalPages}
+                                                    onClick={() => setCurrentPage(prev => prev + 1)}
+                                                    className="p-2 border border-white/10 rounded-lg hover:bg-white/5 disabled:opacity-20 transition-all text-gray-400"
+                                                >
+                                                    <Calendar size={14} className="-rotate-90" />
+                                                </button>
+                                            </div>
+                                            <div className="text-[9px] font-black text-gray-600 uppercase tracking-widest">
+                                                Mostrando {Math.min(tableData.length, (currentPage - 1) * rowsPerPage + 1)}-{Math.min(tableData.length, currentPage * rowsPerPage)} de {tableData.length}
+                                            </div>
+                                        </div>
+                                    );
+                                })()}
                             </div>
                         </>
                     )}
