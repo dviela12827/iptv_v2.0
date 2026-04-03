@@ -84,13 +84,13 @@ export default function Testimonials() {
 
                     {/* Versão DESKTOP: Carrossel Premium */}
                     <div className="hidden md:flex overflow-hidden group">
-                        <div className="flex animate-marquee gap-8 py-10" style={{ animationDuration: '120s' }}>
+                        <div className="flex animate-marquee gap-6 py-10" style={{ animationDuration: '120s' }}>
                             {[...testimonials, ...testimonials].map((t, i) => (
                                 <div
                                     key={`${t.id}-${i}`}
-                                    className="flex-none w-[380px] bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-xl transition-all duration-500 hover:border-primary/40 hover:-translate-y-2 hover:shadow-primary/5 group/card"
+                                    className="flex-none w-[380px] bg-white/95 backdrop-blur-sm p-8 rounded-[2rem] border border-white/80 shadow-[0_8px_40px_rgba(0,0,0,0.3)] transition-all duration-500 hover:border-primary/30 hover:-translate-y-2 hover:shadow-[0_12px_50px_rgba(0,0,0,0.4)] group/card"
                                 >
-                                    <div className="flex items-center justify-between mb-8">
+                                    <div className="flex items-center mb-8">
                                         <div className="flex gap-1.5">
                                             {[...Array(5)].map((_, starIdx) => (
                                                 <Star
@@ -100,24 +100,12 @@ export default function Testimonials() {
                                                 />
                                             ))}
                                         </div>
-                                        <div className="px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 flex items-center gap-2">
-                                            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                                            <span className="text-[10px] font-black text-green-500 uppercase tracking-widest">Ativo Agora</span>
-                                        </div>
                                     </div>
                                     <p className="text-gray-600 text-lg font-medium italic leading-relaxed mb-10 min-h-[90px] group-hover/card:text-black transition-colors">"{t.text}"</p>
                                     <div className="flex items-center gap-4 border-t border-gray-100 pt-8">
                                         <ProfileAvatar name={t.name} color={t.color} />
                                         <div className="flex-1">
-                                            <h4 className="font-black text-gray-900 text-base uppercase tracking-tight mb-1">{t.name}</h4>
-                                            <div className="flex items-center gap-2">
-                                                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-primary/10 border border-primary/20">
-                                                    <CheckCircle size={10} className="text-primary" />
-                                                    <span className="text-[9px] font-black text-primary uppercase tracking-widest">Verificado</span>
-                                                </div>
-                                                <div className="w-1 h-1 bg-white/10 rounded-full" />
-                                                <span className="text-[9px] font-bold text-gray-600 uppercase tracking-[0.2em]">Membro Gold</span>
-                                            </div>
+                                            <h4 className="font-black text-gray-900 text-base uppercase tracking-tight">{t.name}</h4>
                                         </div>
                                     </div>
                                 </div>

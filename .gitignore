@@ -59,3 +59,6 @@ test-*.js
 VERCEL-ENV-VARS.txt
 VARIAVEIS-VERCEL.md
 .env.vercel
+
+# backup local de imagens
+public/images/backup-imgur/

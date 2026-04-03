@@ -28,7 +28,7 @@ export default function ContentCarousel({ title, items, delay = 0 }: CarouselPro
     return (
         <section className="py-4 md:py-8 relative w-full overflow-hidden">
             {/* Subtitle */}
-            <h4 className="container mx-auto px-6 md:px-12 text-sm md:text-xl font-bold mb-4 md:mb-6 text-gray-400 uppercase tracking-widest italic">
+            <h4 className="container mx-auto px-6 md:px-12 text-sm md:text-xl font-bold mb-4 md:mb-6 text-white uppercase tracking-widest italic">
                 {title}
             </h4>
 
@@ -55,7 +55,7 @@ export default function ContentCarousel({ title, items, delay = 0 }: CarouselPro
                                 key={`${item.id}-${idx}`}
                                 className="flex-none w-[140px] md:w-[180px] lg:w-[calc((100vw-12rem)/5.5)] group/card"
                             >
-                                <div className="relative aspect-[2/3] rounded-xl bg-zinc-900 border border-white/5 transition-all duration-500 hover:scale-105 md:group-hover/card:scale-110 group-hover/card:border-primary/50 group-hover/card:shadow-[0_0_20px_rgba(229,9,20,0.5)] cursor-pointer z-10 group-hover/card:z-20">
+                                <div className="relative aspect-[2/3] rounded-xl bg-zinc-900 border border-white/5 transition-all duration-500 hover:scale-105 md:group-hover/card:scale-110 group-hover/card:border-white/20 group-hover/card:shadow-[0_8px_30px_rgba(255,255,255,0.08)] cursor-pointer z-10 group-hover/card:z-20">
                                     <div className="relative w-full h-full rounded-xl overflow-hidden">
                                         <Image
                                             src={item.img}
@@ -66,7 +66,7 @@ export default function ContentCarousel({ title, items, delay = 0 }: CarouselPro
                                         />
                                     </div>
                                     {/* Glass Overlay on Hover */}
-                                    <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover/card:opacity-100 transition-opacity pointer-events-none rounded-xl" />
+                                    <div className="absolute inset-0 bg-white/5 opacity-0 group-hover/card:opacity-100 transition-opacity pointer-events-none rounded-xl" />
                                 </div>
                                 <p className="mt-3 text-center text-[10px] md:text-sm font-bold text-white uppercase tracking-wider truncate px-2 opacity-70 group-hover/card:opacity-100 transition-opacity">
                                     {item.name}
