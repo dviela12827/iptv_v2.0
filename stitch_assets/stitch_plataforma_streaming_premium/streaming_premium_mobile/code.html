@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CinePremium - Streaming</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Plus+Jakarta+Sans:wght@400;700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed-dim": "#ffb4aa",
+                        "on-secondary-container": "#b7b5b4",
+                        "on-surface-variant": "#e9bcb6",
+                        "on-background": "#e2e2e2",
+                        "inverse-primary": "#c0000c",
+                        "on-error": "#690005",
+                        "inverse-surface": "#e2e2e2",
+                        "surface-bright": "#393939",
+                        "on-primary-fixed-variant": "#930007",
+                        "surface": "#131313",
+                        "on-secondary-fixed-variant": "#474746",
+                        "outline-variant": "#5e3f3b",
+                        "surface-dim": "#131313",
+                        "tertiary-fixed": "#e2e2e2",
+                        "primary": "#ffb4aa",
+                        "on-primary": "#690003",
+                        "on-secondary-fixed": "#1b1c1c",
+                        "inverse-on-surface": "#303030",
+                        "tertiary-container": "#717373",
+                        "on-tertiary": "#2f3131",
+                        "primary-container": "#e50914",
+                        "primary-fixed": "#ffdad5",
+                        "surface-tint": "#ffb4aa",
+                        "secondary": "#c8c6c5",
+                        "secondary-fixed": "#e5e2e1",
+                        "on-tertiary-container": "#f9f9f9",
+                        "on-error-container": "#ffdad6",
+                        "surface-variant": "#353535",
+                        "surface-container-highest": "#353535",
+                        "on-primary-fixed": "#410001",
+                        "on-tertiary-fixed": "#1a1c1c",
+                        "outline": "#af8782",
+                        "surface-container-high": "#2a2a2a",
+                        "on-surface": "#e2e2e2",
+                        "on-tertiary-fixed-variant": "#454747",
+                        "secondary-container": "#474746",
+                        "surface-container-low": "#1b1b1b",
+                        "tertiary-fixed-dim": "#c6c6c7",
+                        "surface-container": "#1f1f1f",
+                        "surface-container-lowest": "#0e0e0e",
+                        "tertiary": "#c6c6c7",
+                        "error-container": "#93000a",
+                        "on-primary-container": "#fff7f6",
+                        "error": "#ffb4ab",
+                        "secondary-fixed-dim": "#c8c6c5",
+                        "on-secondary": "#303030",
+                        "background": "#000000"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "card-stack": "0.75rem",
+                        "unit": "8px",
+                        "section-gap": "4rem",
+                        "container-margin": "5vw",
+                        "gutter-x": "1.5rem"
+                    },
+                    "fontFamily": {
+                        "display-hero": ["Bebas Neue"],
+                        "h2-section": ["Plus Jakarta Sans"],
+                        "label-caps": ["Plus Jakarta Sans"],
+                        "body-main": ["Plus Jakarta Sans"],
+                        "h1-impact": ["Bebas Neue"],
+                        "body-sm": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "display-hero": ["96px", { "lineHeight": "90%", "letterSpacing": "2px", "fontWeight": "400" }],
+                        "h2-section": ["24px", { "lineHeight": "120%", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-caps": ["12px", { "lineHeight": "100%", "letterSpacing": "0.1em", "fontWeight": "800" }],
+                        "body-main": ["16px", { "lineHeight": "160%", "fontWeight": "400" }],
+                        "h1-impact": ["48px", { "lineHeight": "100%", "letterSpacing": "1px", "fontWeight": "400" }],
+                        "body-sm": ["14px", { "lineHeight": "150%", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-24 font-body-main antialiased selection:bg-primary-container selection:text-white">
+<!-- TopNavBar (Transactional Intent - Suppressed Links, Logo Centered) -->
+<header class="fixed top-0 w-full z-50 bg-gradient-to-b from-black/90 to-transparent pb-6 pt-4 px-4 flex justify-center items-center">
+<h1 class="text-4xl font-black text-primary-container tracking-tighter font-display-hero">CINEPREMIUM</h1>
+</header>
+<!-- Section 1: Hero Carousel Placeholder -->
+<section class="relative h-[530px] w-full bg-surface-container-highest overflow-hidden">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="Dark cinematic movie poster collage with high contrast lighting and red accents suitable for a premium streaming app hero section" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuANscNj8w1Jdvh3FahBOQT5MgIJMpjLFoGtwkUHDv4KY4Qtw4MFqd0Jw1qVDFLqeV1SOEB7DUl5cHE1FMJHw3VWGdWpk0SiDdoFWhNWE0B9yJWVrhP6oCPFC7u8IMHzwVK6iEoVfP-TlLHRhJd9A5f-rlq_74xitVOh6MKBrUXpQvPiMBtM5Lks6WNyhYK-XLSLsMphtnt7sarscLxxjqmhFJt6GeENLJx12Q2Qq2-INSV9Zxl-o30GtDNuHdZO5ZHMaxaPwOKmfp9-');"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent"></div>
+</section>
+<!-- Section 2: Pricing Plans -->
+<section class="px-container-margin py-section-gap flex flex-col gap-6 relative z-10 -mt-12">
+<h2 class="font-h2-section text-h2-section text-center text-white mb-4">Escolha seu plano</h2>
+<!-- Card 1: 1 Month -->
+<div class="bg-surface-container-high border border-outline-variant rounded-xl p-6 flex flex-col justify-between items-center relative overflow-hidden group hover:border-primary-container transition-colors duration-300 cursor-pointer">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-2">1 Mês</span>
+<div class="flex items-baseline gap-1 text-white">
+<span class="font-body-sm text-body-sm align-top">R$</span>
+<span class="font-h1-impact text-h1-impact">29,90</span>
+</div>
+<button class="w-full mt-6 py-3 border border-white rounded-DEFAULT font-label-caps text-label-caps uppercase text-white hover:bg-white hover:text-black transition-colors duration-200">Assinar</button>
+</div>
+<!-- Card 2: 3 Months (Highlight) -->
+<div class="bg-surface-container-high border-2 border-primary-container rounded-xl p-6 flex flex-col justify-between items-center relative overflow-hidden shadow-[0_0_20px_rgba(229,9,20,0.4)] scale-105 z-10 cursor-pointer">
+<div class="absolute top-0 right-0 bg-primary-container text-white px-3 py-1 rounded-bl-lg font-label-caps text-[10px] uppercase tracking-widest">
+                Economize 11%
+            </div>
+<span class="font-label-caps text-label-caps text-white uppercase tracking-widest mb-2">3 Meses</span>
+<div class="flex items-baseline gap-1 text-white">
+<span class="font-body-sm text-body-sm align-top">R$</span>
+<span class="font-h1-impact text-h1-impact text-primary-container">79,90</span>
+</div>
+<button class="w-full mt-6 py-3 bg-primary-container rounded-DEFAULT font-label-caps text-label-caps uppercase text-white hover:scale-105 transition-transform duration-200">Assinar Agora</button>
+</div>
+<!-- Card 3: 6 Months -->
+<div class="bg-surface-container-high border border-outline-variant rounded-xl p-6 flex flex-col justify-between items-center relative overflow-hidden group hover:border-primary-container transition-colors duration-300 cursor-pointer">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-2">6 Meses</span>
+<div class="flex items-baseline gap-1 text-white">
+<span class="font-body-sm text-body-sm align-top">R$</span>
+<span class="font-h1-impact text-h1-impact">149,90</span>
+</div>
+<button class="w-full mt-6 py-3 border border-white rounded-DEFAULT font-label-caps text-label-caps uppercase text-white hover:bg-white hover:text-black transition-colors duration-200">Assinar</button>
+</div>
+</section>
+<!-- Section 3: Reviews -->
+<section class="px-container-margin pb-section-gap flex flex-col gap-4">
+<h2 class="font-h2-section text-h2-section text-left text-white mb-2">O que dizem os usuários</h2>
+<div class="flex flex-col gap-4">
+<!-- Review 1 -->
+<div class="bg-surface-container-low p-4 rounded-lg flex flex-col gap-2">
+<div class="flex text-primary-container text-sm">
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-background italic">"Qualidade de imagem absurda e sem travamentos. O melhor que já testei."</p>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase mt-1">Carlos Silva</span>
+</div>
+<!-- Review 2 -->
+<div class="bg-surface-container-low p-4 rounded-lg flex flex-col gap-2">
+<div class="flex text-primary-container text-sm">
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-background italic">"O catálogo de filmes clássicos é imbatível. Recomendo o plano de 3 meses!"</p>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase mt-1">Mariana Costa</span>
+</div>
+<!-- Review 3 -->
+<div class="bg-surface-container-low p-4 rounded-lg flex flex-col gap-2">
+<div class="flex text-primary-container text-sm">
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-background italic">"App muito fluído no celular, ótimo para assistir offline no metrô."</p>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase mt-1">Felipe Alves</span>
+</div>
+<!-- Review 4 -->
+<div class="bg-surface-container-low p-4 rounded-lg flex flex-col gap-2">
+<div class="flex text-primary-container text-sm">
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-background italic">"Cancelei os outros e fiquei só com este. O custo-benefício é excelente."</p>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase mt-1">Ana Oliveira</span>
+</div>
+</div>
+</section>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 pb-safe bg-black/90 dark:bg-black/95 backdrop-blur-xl border-t border-white/10 shadow-[0_-4px_20px_rgba(0,0,0,0.5)] rounded-t-lg">
+<a class="flex flex-col items-center justify-center text-gray-500 hover:text-[#E50914] active:scale-90 transition-all duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-['Bebas_Neue'] text-[10px] tracking-widest mt-1">Início</span>
+</a>
+<a class="flex flex-col items-center justify-center text-gray-500 hover:text-[#E50914] active:scale-90 transition-all duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="video_library">video_library</span>
+<span class="font-['Bebas_Neue'] text-[10px] tracking-widest mt-1">Novidades</span>
+</a>
+<a class="flex flex-col items-center justify-center text-gray-500 hover:text-[#E50914] active:scale-90 transition-all duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="download">download</span>
+<span class="font-['Bebas_Neue'] text-[10px] tracking-widest mt-1">Downloads</span>
+</a>
+<a class="flex flex-col items-center justify-center text-white font-bold hover:text-[#E50914] active:scale-90 transition-all duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-['Bebas_Neue'] text-[10px] tracking-widest mt-1 text-[#E50914]">Perfil</span>
+</a>
+</nav>
+</body></html>
