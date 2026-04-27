@@ -3,13 +3,13 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  CheckCircle2, Star, Clock, ShieldCheck, 
-  Zap, Phone, Mail, QrCode, ArrowLeft,
-  X, AlertCircle, Copy, Check, Loader2
+  CheckCircle2, Star,
+  Phone, Mail, ArrowLeft,
+  AlertCircle, Copy, Check, Loader2, Search, Bell
 } from 'lucide-react';
 import axios from 'axios';
 import { db } from '@/lib/firebase';
-import { collection, addDoc, serverTimestamp, doc, onSnapshot, query, where, limit, updateDoc } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, doc, onSnapshot, updateDoc } from 'firebase/firestore';
 
 // --- Utilitários ---
 const formatPhone = (v: string) => {
@@ -165,169 +165,137 @@ export default function LandingPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#0e0e0e] text-[#e2e2e2] font-sans selection:bg-[#E50914] selection:text-white pb-24 md:pb-0">
-      
-      {/* TopNavBar */}
-      <nav className="fixed top-0 w-full z-50 bg-gradient-to-b from-black/90 to-transparent pb-6 pt-4 px-4 md:px-12 flex justify-center md:justify-between items-center backdrop-blur-sm">
-        <h1 className="text-3xl md:text-4xl font-black text-[#E50914] tracking-tighter" style={{ fontFamily: '"Bebas Neue", sans-serif' }}>CINEPREMIUM</h1>
-        <div className="hidden md:flex gap-8 text-sm font-bold tracking-widest uppercase opacity-70">
-          <span className="hover:text-white cursor-pointer">Início</span>
-          <span className="hover:text-white cursor-pointer">Catálogo</span>
-          <span className="hover:text-white cursor-pointer">Depoimentos</span>
-        </div>
-      </nav>
-
+    <div className="min-h-screen text-[#e2e2e2] font-sans antialiased selection:bg-[#e50914] selection:text-white pb-24 md:pb-0" style={{ backgroundColor: '#000000' }}>
       <AnimatePresence mode="wait">
         {step === 'plans' && (
-          <motion.div key="plans" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            
-            {/* HERO SECTION - ORBITING ICONS */}
-            <section className="relative w-full h-[600px] md:h-[700px] flex items-center justify-center overflow-hidden bg-[#131313]">
-              <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-[#131313]/80 to-[#0e0e0e] z-10" />
-              
-              {/* Background Glow */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#E50914]/10 rounded-full blur-[120px] pointer-events-none" />
-
-              {/* Orbiting Circles System */}
-              <div className="relative z-20 w-full max-w-4xl mx-auto flex flex-col items-center justify-center">
-                
-                {/* Texto Central */}
-                <motion.div 
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 0.8 }}
-                  className="text-center z-30 pointer-events-none"
-                >
-                  <h2 className="text-5xl md:text-7xl font-black text-white mb-4 tracking-tighter shadow-black drop-shadow-2xl" style={{ fontFamily: '"Bebas Neue", sans-serif' }}>
-                    O UNIVERSO DO ENTRETENIMENTO<br />
-                    <span className="text-[#E50914]">EM UM SÓ LUGAR</span>
-                  </h2>
-                  <p className="text-gray-400 max-w-lg mx-auto text-sm md:text-base">
-                    Filmes de cinema, séries exclusivas e canais ao vivo sem travamentos.
-                  </p>
-                </motion.div>
-
-                {/* Órbitas e Ícones Flutuantes */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full pointer-events-none opacity-40 md:opacity-100">
-                  <OrbitingLogo src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" delay={0} duration={25} radius={220} size={50} />
-                  <OrbitingLogo src="https://upload.wikimedia.org/wikipedia/commons/1/17/HBO_Max_Logo.svg" delay={12.5} duration={25} radius={220} size={60} />
-                  
-                  <OrbitingLogo src="https://upload.wikimedia.org/wikipedia/commons/3/3e/Disney%2B_logo.svg" delay={0} duration={35} radius={320} size={70} />
-                  <OrbitingLogo src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Amazon_Prime_Video_logo.svg/2560px-Amazon_Prime_Video_logo.svg.png" delay={17.5} duration={35} radius={320} size={60} />
-                  
-                  <OrbitingLogo src="https://logospng.org/download/premiere/logo-premiere-escudo-256.png" delay={5} duration={45} radius={420} size={50} />
-                  <OrbitingLogo src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Apple_TV_Plus_Logo.svg/2560px-Apple_TV_Plus_Logo.svg.png" delay={27.5} duration={45} radius={420} size={60} />
+          <motion.div key="plans" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="font-['Plus_Jakarta_Sans']">
+            {/* TopNavBar */}
+            <nav className="bg-transparent dark:bg-black/60 backdrop-blur-2xl fixed top-0 w-full z-50 flex justify-between items-center px-[5%] py-6">
+              <div className="flex items-center gap-12">
+                <span className="text-4xl font-black text-[#E50914] tracking-tighter font-['Bebas_Neue']">CINEPREMIUM</span>
+                <div className="hidden md:flex gap-8 font-['Bebas_Neue'] tracking-wider uppercase text-lg">
+                  <a className="text-white border-b-2 border-[#E50914] pb-1 hover:text-white transition-colors duration-300" href="#">Início</a>
+                  <a className="text-gray-300 font-light hover:text-white transition-colors duration-300" href="#">Séries</a>
+                  <a className="text-gray-300 font-light hover:text-white transition-colors duration-300" href="#">Filmes</a>
+                  <a className="text-gray-300 font-light hover:text-white transition-colors duration-300" href="#">Bombando</a>
+                  <a className="text-gray-300 font-light hover:text-white transition-colors duration-300" href="#">Minha Lista</a>
                 </div>
               </div>
-            </section>
-
-            {/* SEÇÃO COMPARATIVO CHOCANTE */}
-            <section className="py-20 px-4 max-w-5xl mx-auto relative z-20">
-              <div className="flex flex-col md:flex-row gap-6 md:gap-12 items-stretch justify-center">
-                
-                {/* Bloco Ruim */}
-                <motion.div 
-                  initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
-                  className="flex-1 bg-[#1a1a1a] rounded-2xl p-8 border border-white/5 opacity-60 grayscale filter flex flex-col items-center justify-center text-center"
-                >
-                  <p className="text-gray-400 font-bold tracking-widest uppercase text-sm mb-4">Maneira Antiga</p>
-                  <div className="flex gap-4 justify-center items-center mb-6 opacity-50">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" className="h-6 object-contain" />
-                    <span className="text-2xl font-bold">+</span>
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/1/17/HBO_Max_Logo.svg" className="h-5 object-contain" />
-                    <span className="text-2xl font-bold">+</span>
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/3/3e/Disney%2B_logo.svg" className="h-8 object-contain" />
-                  </div>
-                  <p className="text-4xl font-black text-gray-500 line-through decoration-red-500/50">R$ 180,00<span className="text-sm font-normal">/mês</span></p>
-                  <p className="text-xs text-gray-500 mt-4">Vários apps, assinaturas caras, catálogo dividido.</p>
-                </motion.div>
-
-                {/* VS Badge */}
-                <div className="flex items-center justify-center -my-10 md:my-0 md:-mx-10 z-10">
-                  <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center font-black text-xl border border-white/10 shadow-xl">VS</div>
-                </div>
-
-                {/* Bloco Bom */}
-                <motion.div 
-                  initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
-                  className="flex-1 bg-gradient-to-br from-[#E50914]/20 to-black rounded-2xl p-8 border border-[#E50914]/30 shadow-[0_0_40px_rgba(229,9,20,0.1)] flex flex-col items-center justify-center text-center"
-                >
-                  <p className="text-[#E50914] font-black tracking-widest uppercase text-sm mb-4">CinePremium</p>
-                  <div className="mb-6">
-                    <h3 className="text-3xl font-black text-white" style={{ fontFamily: '"Bebas Neue", sans-serif' }}>TUDO LIBERADO</h3>
-                    <p className="text-sm text-gray-300">Em um único aplicativo</p>
-                  </div>
-                  <p className="text-5xl font-black text-white" style={{ fontFamily: '"Bebas Neue", sans-serif' }}><span className="text-2xl text-[#E50914] mr-1">R$</span>29,90</p>
-                  <p className="text-xs text-green-400 font-bold mt-4">+ Economia de R$ 150 por mês</p>
-                </motion.div>
-
+              <div className="flex items-center gap-6 text-[#E50914]">
+                <Search className="scale-105 transition-transform duration-200 ease-out cursor-pointer hover:text-white" />
+                <Bell className="scale-105 transition-transform duration-200 ease-out cursor-pointer hover:text-white" />
               </div>
-            </section>
+            </nav>
 
-            {/* SEÇÃO PRICING */}
-            <section className="px-4 py-16 relative z-20">
-              <div className="max-w-6xl mx-auto">
-                <h2 className="text-center text-3xl md:text-4xl font-bold mb-12" style={{ fontFamily: '"Bebas Neue", sans-serif', letterSpacing: '1px' }}>Escolha seu plano</h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
-                  {plans.map((plan, i) => (
-                    <motion.div 
-                      key={plan.period}
-                      initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
-                      className={`relative rounded-2xl p-8 flex flex-col items-center cursor-pointer transition-all duration-300 ${plan.highlight ? 'bg-[#1f1f1f] border-2 border-[#E50914] shadow-[0_0_40px_rgba(229,9,20,0.2)] md:-translate-y-4' : 'bg-black/50 border border-white/10 hover:border-white/30 backdrop-blur-xl'}`}
-                      onClick={() => handlePlanSelect(plan)}
-                    >
-                      {plan.save && (
-                        <div className="absolute -top-4 bg-[#E50914] text-white text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-widest">
-                          {plan.save}
-                        </div>
-                      )}
-                      <span className="text-gray-400 font-bold uppercase tracking-widest text-xs mb-4 mt-2">{plan.period}</span>
-                      <div className="text-5xl font-black text-white mb-6" style={{ fontFamily: '"Bebas Neue", sans-serif' }}>
-                        <span className={`text-2xl mr-1 align-top block mt-2 opacity-70 ${plan.highlight ? 'text-[#E50914]' : 'text-gray-500'}`}>R$</span>
-                        {plan.price}
+            <main className="min-h-screen">
+              {/* Seção 1: Carrossel Hero Placeholder */}
+              <section className="w-full h-[614px] relative mt-24 md:mt-0 flex items-center justify-center bg-[#1f1f1f] overflow-hidden group">
+                <img alt="Background hero" className="absolute inset-0 w-full h-full object-cover opacity-50" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrHyTfersjoOUSAMcwCoKRZsslP3jemtan5G3JUKrcFqj2Q1gc5DSvs4CzT2lSh-zhT16C65tfa2CTZZFD4UxxNUqevF67id5vfJCpK9CC_4lNhqkQpbzkQcA4nIumh7k_y_WhbKiKoSw0q30_ipETRGNYkMTdZ303YD4hihHJaJ-8bp88fKL1ZFVKz4dam3jO3bYIxv7P15uz92Z4T46-hpO76ehxy3Q8WZ6AhZdIUINYR9YQPlYGatEufKP5f470_0wew_2UVIfE"/>
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/60"></div>
+                <div className="relative z-10 p-8 border-2 border-dashed border-[#5e3f3b]/50 rounded-xl bg-black/40 backdrop-blur-md">
+                  <p className="font-['Plus_Jakarta_Sans'] text-[12px] font-extrabold text-[#e9bcb6] uppercase tracking-widest">Placeholder Carrossel Desktop - 1920x600</p>
+                </div>
+              </section>
+
+              {/* Seção 2: Pricing */}
+              <section className="px-[5vw] py-[4rem] relative z-20 -mt-16">
+                <div className="max-w-6xl mx-auto">
+                  <h2 className="font-['Plus_Jakarta_Sans'] font-bold text-[24px] text-center mb-16 text-[#e2e2e2]">Escolha seu plano</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-end">
+                    {/* Card 1 */}
+                    <div className="bg-[#131313]/70 backdrop-blur-md rounded-xl p-8 flex flex-col items-center border border-[#5e3f3b]/30 hover:border-[#af8782] transition-colors duration-300">
+                      <span className="font-['Plus_Jakarta_Sans'] font-extrabold text-[12px] text-[#e9bcb6] uppercase mb-4 tracking-widest">1 Mês</span>
+                      <div className="font-['Bebas_Neue'] text-[48px] text-[#e2e2e2] mb-8 tracking-wide flex items-start">
+                        <span className="text-2xl mr-1 mt-2 opacity-50">R$</span>29,90
                       </div>
-                      <ul className="text-center text-sm text-gray-300 space-y-3 mb-8 w-full">
+                      <ul className="text-center font-['Plus_Jakarta_Sans'] text-[14px] text-[#e9bcb6] space-y-3 mb-8 w-full opacity-80">
                         <li>Acesso a todo o catálogo</li>
-                        <li>Qualidade 4K HDR</li>
-                        {plan.highlight ? (
-                          <>
-                            <li>Assista em até 4 telas</li>
-                            <li className="text-[#E50914] font-bold">Downloads ilimitados</li>
-                          </>
-                        ) : (
-                          <li>Assista em {plan.period === '1 Mês' ? '1 tela' : 'até 2 telas'}</li>
-                        )}
+                        <li>Qualidade 4K Ultra HD</li>
+                        <li>Assista em 1 tela</li>
                       </ul>
-                      <button className={`w-full py-4 rounded-lg font-bold tracking-widest uppercase text-xs transition-transform hover:scale-105 ${plan.highlight ? 'bg-[#E50914] text-white' : 'border border-white/20 text-white hover:bg-white/5'}`}>
-                        {plan.highlight ? 'Escolher Premium' : 'Assinar Agora'}
+                      <button onClick={() => handlePlanSelect({ period: '1 Mês', price: '29,90' })} className="w-full py-4 rounded-lg font-['Plus_Jakarta_Sans'] font-extrabold text-[12px] border border-[#e2e2e2] text-[#e2e2e2] hover:bg-white/5 transition-all duration-200 tracking-widest uppercase">
+                        Assinar Agora
                       </button>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-            </section>
+                    </div>
 
-            {/* SEÇÃO PROVA SOCIAL */}
-            <section className="px-4 py-20 bg-[#0a0a0a] border-t border-white/5">
-              <div className="max-w-7xl mx-auto">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  {[
-                    { n: "Marcelo Silva", t: "A qualidade de imagem é surreal. Parece cinema. O plano de 3 meses vale muito a pena." },
-                    { n: "Ana Clara S.", t: "Catálogo incrível, sempre atualizado com lançamentos. A interface escura não cansa os olhos." },
-                    { n: "Roberto Mendes", t: "Sem travamentos, mesmo no 4K. O som Dolby Atmos faz toda a diferença para filmes." },
-                    { n: "Julia Nogueira", t: "Minha família usa as 4 telas simultâneas do plano premium e nunca tivemos problemas." }
-                  ].map((review, i) => (
-                    <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="bg-[#131313] rounded-xl p-6 border border-white/5 flex flex-col">
-                      <div className="flex text-[#E50914] mb-4 gap-1">
-                        {[1,2,3,4,5].map(star => <Star key={star} size={14} fill="currentColor" />)}
+                    {/* Card 2 (Destaque) */}
+                    <div className="bg-[#1f1f1f] rounded-xl p-10 flex flex-col items-center border-2 border-[#E50914] shadow-[0_0_40px_rgba(229,9,20,0.25)] relative transform md:-translate-y-4 cursor-pointer" onClick={() => handlePlanSelect({ period: '3 Meses', price: '79,90', highlight: true })}>
+                      <div className="absolute -top-4 bg-[#E50914] text-white font-['Plus_Jakarta_Sans'] font-extrabold text-[12px] px-6 py-2 rounded-full uppercase tracking-widest shadow-lg">
+                        Economize 11%
                       </div>
-                      <p className="text-gray-400 text-sm italic flex-grow">"{review.t}"</p>
-                      <span className="text-[#E50914] text-xs font-bold uppercase tracking-widest mt-6">— {review.n}</span>
-                    </motion.div>
-                  ))}
+                      <span className="font-['Plus_Jakarta_Sans'] font-extrabold text-[12px] text-[#ffb4aa] uppercase mb-4 mt-2 tracking-widest">3 Meses</span>
+                      <div className="font-['Bebas_Neue'] text-[64px] md:text-[96px] leading-[90%] text-white mb-8 tracking-wide flex items-start text-shadow-sm">
+                        <span className="text-3xl mr-1 mt-4 opacity-70 text-[#E50914]">R$</span>79,90
+                      </div>
+                      <ul className="text-center font-['Plus_Jakarta_Sans'] text-[16px] text-[#e2e2e2] space-y-4 mb-10 w-full">
+                        <li>Acesso a todo o catálogo</li>
+                        <li>Qualidade 4K HDR Atmos</li>
+                        <li>Assista em até 4 telas simultâneas</li>
+                        <li className="text-[#E50914] font-bold">Downloads ilimitados</li>
+                      </ul>
+                      <button className="w-full py-5 rounded-lg font-['Plus_Jakarta_Sans'] font-extrabold text-[12px] bg-[#E50914] text-white hover:scale-105 transition-transform duration-200 shadow-[0_4px_20px_rgba(229,9,20,0.4)] tracking-widest uppercase">
+                        Escolher Plano Premium
+                      </button>
+                    </div>
+
+                    {/* Card 3 */}
+                    <div className="bg-[#131313]/70 backdrop-blur-md rounded-xl p-8 flex flex-col items-center border border-[#5e3f3b]/30 hover:border-[#af8782] transition-colors duration-300">
+                      <span className="font-['Plus_Jakarta_Sans'] font-extrabold text-[12px] text-[#e9bcb6] uppercase mb-4 tracking-widest">6 Meses</span>
+                      <div className="font-['Bebas_Neue'] text-[48px] text-[#e2e2e2] mb-8 tracking-wide flex items-start">
+                        <span className="text-2xl mr-1 mt-2 opacity-50">R$</span>149,90
+                      </div>
+                      <ul className="text-center font-['Plus_Jakarta_Sans'] text-[14px] text-[#e9bcb6] space-y-3 mb-8 w-full opacity-80">
+                        <li>Acesso a todo o catálogo</li>
+                        <li>Qualidade 4K Ultra HD</li>
+                        <li>Assista em até 2 telas</li>
+                      </ul>
+                      <button onClick={() => handlePlanSelect({ period: '6 Meses', price: '149,90' })} className="w-full py-4 rounded-lg font-['Plus_Jakarta_Sans'] font-extrabold text-[12px] border border-[#e2e2e2] text-[#e2e2e2] hover:bg-white/5 transition-all duration-200 tracking-widest uppercase">
+                        Assinar Agora
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              {/* Seção 3: Avaliações */}
+              <section className="px-[5vw] py-[4rem] bg-[#1b1b1b] border-t border-white/5">
+                <div className="max-w-7xl mx-auto">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {[
+                      { n: "Marcelo Silva", t: "A qualidade de imagem é surreal. Parece que estou no cinema toda vez que ligo a TV. O plano de 3 meses vale muito a pena." },
+                      { n: "Ana Clara S.", t: "Catálogo incrível, sempre atualizado com os melhores lançamentos. A interface escura não cansa os olhos à noite." },
+                      { n: "Roberto Mendes", t: "Sem travamentos, mesmo no 4K. O som Dolby Atmos no plano principal faz toda a diferença para filmes de ação." },
+                      { n: "Julia Nogueira", t: "Minha família inteira usa as 4 telas simultâneas do plano premium e nunca tivemos problemas. Recomendo de olhos fechados." }
+                    ].map((review, i) => (
+                      <div key={i} className="bg-[#131313] rounded-xl p-6 border border-white/5 flex flex-col h-full hover:bg-[#353535] transition-colors duration-300">
+                        <div className="flex text-[#E50914] mb-4 gap-1">
+                          {[1,2,3,4,5].map(star => <Star key={star} size={14} fill="currentColor" />)}
+                        </div>
+                        <p className="font-['Plus_Jakarta_Sans'] text-[14px] text-[#e2e2e2] flex-grow opacity-90 italic">"{review.t}"</p>
+                        <span className="font-['Plus_Jakarta_Sans'] font-extrabold text-[12px] text-[#ffb4aa] uppercase mt-6 block tracking-widest">— {review.n}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </section>
+            </main>
+            
+            {/* Footer */}
+            <footer className="bg-black w-full py-12 px-[5%] border-t border-white/5">
+              <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 opacity-70">
+                <div className="col-span-2 md:col-span-4 mb-4">
+                  <span className="text-[#E50914] font-black text-2xl tracking-tighter font-['Bebas_Neue']">CINEPREMIUM</span>
+                </div>
+                <a className="font-sans text-xs uppercase tracking-widest text-gray-500 hover:underline transition-opacity duration-200 hover:text-white" href="#">Perguntas Frequentes</a>
+                <a className="font-sans text-xs uppercase tracking-widest text-gray-500 hover:underline transition-opacity duration-200 hover:text-white" href="#">Central de Ajuda</a>
+                <a className="font-sans text-xs uppercase tracking-widest text-gray-500 hover:underline transition-opacity duration-200 hover:text-white" href="#">Termos de Uso</a>
+                <a className="font-sans text-xs uppercase tracking-widest text-gray-500 hover:underline transition-opacity duration-200 hover:text-white" href="#">Privacidade</a>
+                <a className="font-sans text-xs uppercase tracking-widest text-gray-500 hover:underline transition-opacity duration-200 hover:text-white" href="#">Entre em Contato</a>
+                <div className="col-span-2 md:col-span-4 mt-8">
+                  <p className="font-sans text-xs tracking-widest text-gray-500">© 2024 CinePremium Brasil. Todos os direitos reservados.</p>
                 </div>
               </div>
-            </section>
+            </footer>
           </motion.div>
         )}
 
