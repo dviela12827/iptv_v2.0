@@ -1,10 +1,9 @@
 import type { Metadata } from 'next';
-import { Outfit, Inter, Black_Ops_One } from 'next/font/google';
+import { Syne, Inter } from 'next/font/google';
 import './globals.css';
 
-const outfit = Outfit({ subsets: ['latin'] });
+const syne = Syne({ subsets: ['latin'], variable: '--font-syne' });
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
-const blackOps = Black_Ops_One({ subsets: ['latin'], weight: '400', variable: '--font-black-ops' });
 
 export const metadata: Metadata = {
   title: 'RedFlix - O Melhor do Streaming',
@@ -21,7 +20,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR">
-      <body className={`${outfit.className} ${inter.variable} ${blackOps.variable} antialiased selection:bg-primary/30 selection:text-white`}>
+      <body className={`${inter.className} ${syne.variable} antialiased selection:bg-[#E50914] selection:text-white bg-black`}>
         {children}
       </body>
     </html>
