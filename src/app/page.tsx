@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   CheckCircle2, Star,
   Phone, Mail, ArrowLeft,
-  AlertCircle, Copy, Check, Loader2, Search, Bell
+  AlertCircle, Copy, Check, Loader2, Search, Bell, ShieldCheck
 } from 'lucide-react';
 import axios from 'axios';
 import { db } from '@/lib/firebase';
