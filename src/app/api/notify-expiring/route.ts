@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+export const dynamic = 'force-dynamic';
 import { adminDb } from '@/lib/firebaseAdmin';
 import { Resend } from 'resend';
 

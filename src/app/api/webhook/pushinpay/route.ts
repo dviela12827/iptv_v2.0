@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+export const dynamic = 'force-dynamic';
 import { adminDb } from '@/lib/firebaseAdmin';
 import { sendEmail } from '@/lib/email';
 import querystring from 'querystring';

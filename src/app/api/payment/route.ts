@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+export const dynamic = 'force-dynamic';
 import axios from 'axios';
 import { adminDb } from '@/lib/firebaseAdmin';
 import { sendEmail } from '@/lib/email';
@@ -66,15 +67,19 @@ export async function POST(req: Request) {
         // 1. Log payment in "payments" collection for real-time tracking via Admin SDK
         // MANUAL: SAVE AS 'pending' IMMEDIATELY
         try {
-            await adminDb.collection('payments').doc(transactionId).set({
-                id: transactionId,
-                status: 'pending', // Correct status as per manual
-                value: parseFloat(cleanAmount),
-                created_at: new Date().toISOString(),
-                leadId: leadId || null,
-                origin: origin || 'landing_page'
-            });
-            console.log(`[PIX API] Documento de pagamento criado: ${transactionId} (status: pending)`);
+            if (adminDb) {
+                await adminDb.collection('payments').doc(transactionId).set({
+                    id: transactionId,
+                    status: 'pending', // Correct status as per manual
+                    value: parseFloat(cleanAmount),
+                    created_at: new Date().toISOString(),
+                    leadId: leadId || null,
+                    origin: origin || 'landing_page'
+                });
+                console.log(`[PIX API] Documento de pagamento criado: ${transactionId} (status: pending)`);
+            } else {
+                console.warn('[PIX API] Firebase Admin não inicializado. Pagamento não registrado no banco.');
+            }
         } catch (dbError) {
             console.error('Erro ao salvar no Firestore (payments):', dbError);
         }
@@ -82,14 +87,16 @@ export async function POST(req: Request) {
         // 2. Update lead if provided via Admin SDK
         if (leadId && leadId !== 'new') {
             try {
-                const isRenewal = body.isRenewal === true;
-                await adminDb.collection('leads').doc(leadId).update({
-                    transactionId: transactionId,
-                    pixCode: data.qr_code,
-                    status: 'pending_payment',
-                    isRenewal: isRenewal // Marca se é renovação para o webhook
-                });
-                console.log(`[PIX API] Lead ${leadId} atualizado (Renovação: ${isRenewal}).`);
+                if (adminDb) {
+                    const isRenewal = body.isRenewal === true;
+                    await adminDb.collection('leads').doc(leadId).update({
+                        transactionId: transactionId,
+                        pixCode: data.qr_code,
+                        status: 'pending_payment',
+                        isRenewal: isRenewal // Marca se é renovação para o webhook
+                    });
+                    console.log(`[PIX API] Lead ${leadId} atualizado (Renovação: ${isRenewal}).`);
+                }
             } catch (dbError) {
                 console.error('Erro ao atualizar lead:', dbError);
             }
