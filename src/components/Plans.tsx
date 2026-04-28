@@ -78,40 +78,7 @@ export default function Plans() {
     return (
         <div id="plans" className="bg-black">
 
-            {/* Bonuses Section - Synced with FAQ style */}
-            <section className="py-16 md:py-24 bg-[#0a0a0a] relative overflow-hidden">
-                {/* Divider Line (FAQ Style) */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-6xl h-[5px] bg-gradient-to-r from-transparent via-primary/50 to-transparent shadow-[0_0_20px_rgba(229,9,20,0.3)]" />
 
-                <div className="container mx-auto px-6 relative z-10">
-                    <div className="mb-0">
-                        <h2 className="text-xl md:text-4xl font-black text-center mb-10 md:mb-12 text-white uppercase italic tracking-tighter">
-                            Bônus <span className="text-primary">Inclusos</span> no seu acesso:
-                        </h2>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 max-w-5xl mx-auto">
-                            {bonuses.map((b) => (
-                                <div
-                                    key={b.id}
-                                    className="group relative bg-[#0d0d0d] backdrop-blur-sm border border-white/10 p-5 md:p-6 rounded-[2rem] overflow-hidden transition-all duration-500 hover:bg-[#121212] hover:border-primary/40 hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(0,0,0,0.4)]"
-                                >
-                                    <div className="absolute -right-4 -top-4 w-20 h-20 bg-primary/5 blur-3xl group-hover:bg-primary/10 transition-all duration-700" />
-                                    <div className="relative z-10 flex items-center gap-4">
-                                        <div className="w-12 h-12 bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a] border border-white/5 rounded-2xl flex items-center justify-center text-primary shadow-lg group-hover:scale-105 transition-transform duration-500 shrink-0">
-                                            <b.icon size={22} strokeWidth={2.5} />
-                                        </div>
-                                        <div>
-                                            <h4 className="font-black text-white text-sm md:text-base mb-0.5 uppercase tracking-tight">{b.title}</h4>
-                                            <p className="text-gray-500 text-[11px] md:text-[12px] font-bold uppercase tracking-wider leading-relaxed">{b.desc}</p>
-                                        </div>
-                                    </div>
-                                    <div className="absolute bottom-0 left-0 h-[3px] w-0 bg-primary group-hover:w-full transition-all duration-700 delay-100" />
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            </section>
 
             {/* Plans Section - Hero Highlight Edition (Synced with FAQ style) */}
             <section id="pricing" className="py-16 md:py-24 bg-black relative overflow-hidden text-white">

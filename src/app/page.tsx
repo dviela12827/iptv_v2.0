@@ -61,14 +61,7 @@ export default function Home() {
         <Hero />
       </motion.div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 1 }}
-      >
-        <PriceComparison />
-      </motion.div>
+
 
       <section className="py-16 bg-black">
         <motion.div
